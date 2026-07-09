@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RetailIQ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/home.css">
+</head>
+<body>
+
+<!-- background circuit / pulse layer -->
+<div class="bg-field" aria-hidden="true">
+  <svg class="pulse-line" viewBox="0 0 1600 400" preserveAspectRatio="none">
+    <path class="pulse-path" d="M0,200 L120,200 L150,120 L190,280 L230,60 L270,200 L420,200 L450,160 L480,200 L620,200 L650,90 L690,310 L730,200 L900,200 L930,150 L965,200 L1120,200 L1150,110 L1190,290 L1230,200 L1600,200"/>
+  </svg>
+</div>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <div class="brand">
+      <img src="/static/images/logo.png" alt="RetailIQ logo" class="brand-mark">
+      <div class="brand-text">
+        <span class="brand-name">Retail<span class="accent">IQ</span></span>
+        <span class="brand-line">Smart Retail Mentoring Eco-System</span>
+      </div>
+    </div>
+    <nav class="site-nav">
+      <a href="#features">Platform</a>
+      <a href="#assistant">Assistant</a>
+      <a href="/auth/login" class="nav-link-auth">Log In</a>
+      <a href="/auth/register" class="nav-signup">Register</a>
+      <button class="nav-cta" data-open-role-picker>Get Started</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero wrap">
+    <p class="eyebrow">AI-Powered Retail Management</p>
+    <h1 class="headline">Retail intelligence that never clocks out.</h1>
+    <p class="subhead">
+      RetailIQ is an AI-powered retail management platform that helps stores monitor inventory,
+      predict future demand, analyze customer traffic, and provide instant access to operational
+      knowledge through an intelligent assistant.
+    </p>
+    <div class="hero-actions">
+      <button class="btn btn-primary" data-open-role-picker>Get Started</button>
+      <a href="#features" class="btn btn-ghost">See the platform</a>
+    </div>
+
+    <div class="hero-readout" role="presentation">
+      <div class="readout-item">
+        <span class="readout-label">Stock watch</span>
+        <span class="readout-value">Live</span>
+      </div>
+      <div class="readout-item">
+        <span class="readout-label">Demand model</span>
+        <span class="readout-value">Updated hourly</span>
+      </div>
+      <div class="readout-item">
+        <span class="readout-label">Assistant</span>
+        <span class="readout-value">Ready</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="features wrap">
+    <p class="section-eyebrow">What RetailIQ watches for you</p>
+    <h2 class="section-title">One system, four jobs your store needs done.</h2>
+
+    <div class="feature-grid">
+      <article class="feature-card">
+        <div class="feature-icon" data-icon="inventory"></div>
+        <h3>Inventory Monitoring</h3>
+        <p>Know what's on the shelf, what's in the back, and what's about to run out — in real time, across every location.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon" data-icon="forecast"></div>
+        <h3>Demand Forecasting</h3>
+        <p>See next week's demand before it happens. Order the right amount, the first time, every time.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon" data-icon="traffic"></div>
+        <h3>Customer Traffic Analysis</h3>
+        <p>Understand how customers move through your store, when they show up, and where they linger.</p>
+      </article>
+
+      <article id="assistant" class="feature-card">
+        <div class="feature-icon" data-icon="assistant"></div>
+        <h3>Intelligent Assistant</h3>
+        <p>Ask a question, get an answer. Store policy, stock levels, sales history — on demand, in plain language.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="cta-band wrap">
+    <div class="cta-band-inner">
+      <div>
+        <h2>Ready to see your store this clearly?</h2>
+        <p>Choose how you'll sign in — RetailIQ adapts to the role you play in your store.</p>
+      </div>
+      <button class="btn btn-primary" data-open-role-picker>Get Started</button>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="brand brand-footer">
+      <img src="/static/images/logo.png" alt="RetailIQ logo" class="brand-mark brand-mark-sm">
+      <span class="brand-name brand-name-sm">Retail<span class="accent">IQ</span></span>
+    </div>
+    <p class="footer-line">Smart Retail Mentoring Eco-System</p>
+  </div>
+</footer>
+
+<!-- Role picker overlay -->
+<div class="role-overlay" id="roleOverlay" aria-hidden="true">
+  <div class="role-modal" role="dialog" aria-modal="true" aria-labelledby="roleModalTitle">
+    <button class="role-close" id="roleClose" aria-label="Close">&times;</button>
+    <p class="role-eyebrow">Continue as</p>
+    <h2 id="roleModalTitle">Who's signing in?</h2>
+    <p class="role-sub">RetailIQ tailors the dashboard to your role in the store.</p>
+
+    <div class="role-grid">
+      <button class="role-card" data-role="customer">
+        <div class="role-icon" data-icon="customer"></div>
+        <span class="role-title">Customer</span>
+        <span class="role-desc">Front-line staff. Check stock, log activity, ask the assistant.</span>
+      </button>
+
+      <button class="role-card" data-role="admin">
+        <div class="role-icon" data-icon="admin"></div>
+        <span class="role-title">Manager / Owner</span>
+        <span class="role-desc">Run the floor. Forecasts, traffic reports, team oversight.</span>
+      </button>
+    </div>
+
+    <div class="role-status" id="roleStatus" aria-live="polite"></div>
+  </div>
+</div>
+
+<script src="/static/js/home.js"></script>
+</body>
+</html>

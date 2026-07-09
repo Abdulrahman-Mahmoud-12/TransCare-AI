@@ -1,0 +1,29 @@
+# 1. Environment Secrets & Variables
+.env
+.env.local
+.env.*.local
+
+# 2. Database Binary Files
+*.db
+*.sqlite3
+retailiq.db
+
+# 3. Python Cache and Compilation
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# 4. Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+# 5. OS Generated Files
+.DS_Store
+Thumbs.db
+
+# 6. Models Weights
+*.pt
+*.pkl

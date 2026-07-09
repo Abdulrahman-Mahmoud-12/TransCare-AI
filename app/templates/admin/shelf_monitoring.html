@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RetailIQ — Shelf Monitoring</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/home.css">
+  <link rel="stylesheet" href="/static/css/admin-main.css">
+  <link rel="stylesheet" href="/static/css/shelf-monitoring.css">
+</head>
+<body class="admin-body">
+
+<div class="admin-shell">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-brand">
+      <img src="/static/images/logo.png" alt="RetailIQ logo" class="brand-mark brand-mark-sm">
+      <div class="brand-text">
+        <span class="brand-name brand-name-sm">Retail<span class="accent">IQ</span></span>
+        <span class="brand-line">Admin Console</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="/admin/main" class="sidebar-link" data-icon="overview">
+        <span class="sidebar-icon"></span> Overview
+      </a>
+      <a href="/admin/dashboard" class="sidebar-link" data-icon="dashboard">
+        <span class="sidebar-icon"></span> Dashboard
+      </a>
+      <a href="/admin/shelf-monitoring" class="sidebar-link is-active" data-icon="shelf">
+        <span class="sidebar-icon"></span> Shelf Monitoring
+      </a>
+      <a href="/admin/reports" class="sidebar-link" data-icon="reports">
+        <span class="sidebar-icon"></span> Business Reports
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="/admin/settings" class="sidebar-link" data-icon="settings">
+        <span class="sidebar-icon"></span> Settings
+      </a>
+      <button class="sidebar-link sidebar-logout" id="sidebarLogoutBtn" data-icon="logout">
+        <span class="sidebar-icon"></span> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- ============ CONTENT ============ -->
+  <div class="admin-content">
+
+    <!-- ============ TOPBAR ============ -->
+    <header class="admin-topbar">
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+
+      <div class="topbar-search">
+        <span class="search-icon" aria-hidden="true"></span>
+        <input type="text" placeholder="Search products, orders, reports…" id="globalSearchInput">
+      </div>
+
+      <div class="topbar-actions">
+        <div class="icon-menu" id="notifMenu">
+          <button class="icon-btn" id="notifBtn" aria-haspopup="true" aria-expanded="false" aria-label="Notifications">
+            🔔<span class="badge-dot" id="notifBadge">3</span>
+          </button>
+          <div class="icon-dropdown" role="menu">
+            <p class="icon-dropdown-title">Notifications</p>
+            <div class="notif-item"><span class="notif-dot dot-yellow"></span> Low stock: Whole Milk 1L <span class="notif-time">12m</span></div>
+            <div class="notif-item"><span class="notif-dot dot-red"></span> Empty shelf detected — Aisle 3 <span class="notif-time">40m</span></div>
+            <div class="notif-item"><span class="notif-dot dot-green"></span> Weekly report generated <span class="notif-time">2h</span></div>
+          </div>
+        </div>
+
+        <div class="icon-menu" id="alertsMenu">
+          <button class="icon-btn" id="alertsBtn" aria-haspopup="true" aria-expanded="false" aria-label="System alerts">
+            ⚠️<span class="badge-dot is-alert" id="alertsBadge">2</span>
+          </button>
+          <div class="icon-dropdown" role="menu">
+            <p class="icon-dropdown-title">System Alerts</p>
+            <div class="notif-item"><span class="notif-dot dot-red"></span> Forecasting engine job failed <span class="notif-time">1h</span></div>
+            <div class="notif-item"><span class="notif-dot dot-yellow"></span> AI service latency elevated <span class="notif-time">3h</span></div>
+          </div>
+        </div>
+
+        <button class="icon-btn" id="settingsBtn" aria-label="Settings" onclick="window.location.href='/admin/settings'">⚙️</button>
+
+        <div class="admin-profile" id="adminProfileMenu">
+          <button class="profile-trigger" id="profileTrigger" aria-haspopup="true" aria-expanded="false">
+            <span class="profile-avatar" id="profileAvatarInitial">{{ first_name[0].upper() }}</span>
+            <span class="profile-meta">
+              <span class="profile-name" id="adminNameLabel">{{ admin.full_name }}</span>
+              <span class="role-badge">Manager</span>
+            </span>
+          </button>
+          <div class="profile-dropdown" role="menu">
+            <a href="/admin/settings" role="menuitem">Settings</a>
+            <button class="logout-item" id="logoutBtn" role="menuitem">Log Out</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-main">
+
+      <!-- ============ PAGE HEADER ============ -->
+      <section class="page-section shelf-header-section">
+        <div class="shelf-header">
+          <div class="shelf-header-text">
+            <p class="eyebrow">AI object detection</p>
+            <h1 class="shelf-title">Shelf Monitoring</h1>
+            <p class="shelf-subtitle">Upload shelf images and let RetailIQ's detection model identify products, flag empty spaces, and measure shelf occupancy in seconds.</p>
+          </div>
+          <div class="shelf-header-meta">
+            <span class="meta-pill"><span class="status-dot"></span> Detection engine <strong id="engineStatusPill">Online</strong></span>
+            <span class="meta-pill">Last analysis <strong id="lastAnalysisTime">Today, 8:52 AM</strong></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ UPLOAD SECTION ============ -->
+      <section class="page-section upload-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Step 1</p>
+            <h2 class="section-title" style="margin:0; text-align:left;">Upload a shelf image.</h2>
+          </div>
+        </div>
+
+        <div class="upload-card">
+          <div class="upload-dropzone" id="uploadDropzone">
+            <input type="file" id="shelfFileInput" accept=".jpg,.jpeg,.png" hidden>
+            <div class="upload-dropzone-inner" id="uploadDropzoneInner">
+              <div class="upload-icon">📤</div>
+              <p class="upload-dropzone-title">Drag &amp; drop a shelf image here</p>
+              <p class="upload-dropzone-sub">or</p>
+              <button class="btn btn-primary" id="browseImageBtn" type="button">Browse Image</button>
+              <p class="upload-formats">Supported formats: JPG, PNG, JPEG · Max 10MB</p>
+            </div>
+
+            <div class="upload-preview" id="uploadPreview" hidden>
+              <img id="uploadPreviewImg" alt="Selected shelf image preview">
+              <div class="upload-preview-meta">
+                <span id="uploadFileName">shelf_aisle_03.jpg</span>
+                <span id="uploadFileSize" class="upload-file-size">—</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="upload-status-row">
+            <div class="upload-status" id="uploadStatus">
+              <span class="upload-status-dot" id="uploadStatusDot"></span>
+              <span id="uploadStatusText">No image selected yet.</span>
+            </div>
+
+            <div class="upload-actions">
+              <button class="btn btn-ghost" id="uploadImageBtn" type="button" disabled>Upload Image</button>
+              <button class="btn btn-primary" id="analyzeShelfBtn" type="button" disabled>Analyze Shelf</button>
+              <button class="btn btn-outline" id="resetUploadBtn" type="button">Reset</button>
+            </div>
+          </div>
+
+          <div class="analyze-progress" id="analyzeProgress" hidden>
+            <div class="analyze-progress-bar"><span id="analyzeProgressFill"></span></div>
+            <p class="analyze-progress-text" id="analyzeProgressText">Running AI detection model…</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ RESULTS (hidden until analysis runs) ============ -->
+      <div id="resultsWrapper" hidden>
+
+        <!-- ============ DETECTION RESULT IMAGES ============ -->
+        <section class="page-section detection-images-section">
+          <div class="section-head">
+            <div>
+              <p class="section-eyebrow">Step 2</p>
+              <h2 class="section-title" style="margin:0; text-align:left;">Detection result.</h2>
+            </div>
+          </div>
+
+          <div class="detection-images-grid">
+            <div class="detection-image-card">
+              <div class="detection-image-head">
+                <span>Original Image</span>
+              </div>
+              <div class="detection-image-body" id="originalImageBody">
+                <img id="originalImageEl" alt="Original uploaded shelf image">
+              </div>
+            </div>
+
+            <div class="detection-image-card">
+              <div class="detection-image-head">
+                <span>Detection Result</span>
+                <span class="detection-image-tag">AI Processed</span>
+              </div>
+              <div class="detection-image-body" id="detectionImageBody">
+                <img id="detectionImageEl" alt="Shelf image with detected product bounding boxes">
+                <div class="bbox-layer" id="bboxLayer"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ DETECTION SUMMARY (KPIs) ============ -->
+        <section class="page-section kpi-section">
+          <div class="section-head">
+            <div>
+              <p class="section-eyebrow">Detection summary</p>
+              <h2 class="section-title" style="margin:0; text-align:left;">What the model found.</h2>
+            </div>
+          </div>
+
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-icon" data-icon="products"></div>
+              <span class="kpi-value" id="kpiTotalProducts">128</span>
+              <span class="kpi-label">Total Products Detected</span>
+              <p class="kpi-desc">Individual items identified across the shelf.</p>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon" data-icon="empty"></div>
+              <span class="kpi-value" id="kpiEmptySpaces">9</span>
+              <span class="kpi-label">Empty Shelf Spaces</span>
+              <p class="kpi-desc">Gaps identified where stock is missing.</p>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon" data-icon="occupancy"></div>
+              <span class="kpi-value" id="kpiOccupancy">87%</span>
+              <span class="kpi-label">Shelf Occupancy</span>
+              <p class="kpi-desc">Share of shelf space currently stocked.</p>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon" data-icon="classes"></div>
+              <span class="kpi-value" id="kpiClasses">6</span>
+              <span class="kpi-label">Product Classes Detected</span>
+              <p class="kpi-desc">Distinct categories recognized by the model.</p>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon" data-icon="confidence"></div>
+              <span class="kpi-value" id="kpiConfidence">93.4%</span>
+              <span class="kpi-label">Detection Confidence (Avg)</span>
+              <p class="kpi-desc">Average model confidence across detections.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ PRODUCT DETECTION TABLE ============ -->
+        <section class="page-section detection-table-section">
+          <div class="section-head">
+            <div>
+              <p class="section-eyebrow">Breakdown</p>
+              <h2 class="section-title" style="margin:0; text-align:left;">Detected products.</h2>
+            </div>
+          </div>
+
+          <div class="table-card">
+            <table class="detection-table">
+              <thead>
+                <tr>
+                  <th>Product Category</th>
+                  <th>Quantity Detected</th>
+                  <th>Average Confidence</th>
+                  <th>Shelf Location</th>
+                </tr>
+              </thead>
+              <tbody id="detectionTableBody">
+                <tr>
+                  <td><span class="category-dot" style="--dot:#6366f1"></span>Dairy</td>
+                  <td>34</td>
+                  <td>95.2%</td>
+                  <td>Aisle 1 · Shelf A</td>
+                </tr>
+                <tr>
+                  <td><span class="category-dot" style="--dot:#c8830f"></span>Bakery</td>
+                  <td>21</td>
+                  <td>90.8%</td>
+                  <td>Aisle 2 · Shelf B</td>
+                </tr>
+                <tr>
+                  <td><span class="category-dot" style="--dot:#1fa15a"></span>Beverages</td>
+                  <td>28</td>
+                  <td>94.1%</td>
+                  <td>Aisle 3 · Shelf A</td>
+                </tr>
+                <tr>
+                  <td><span class="category-dot" style="--dot:#c8461e"></span>Snacks</td>
+                  <td>19</td>
+                  <td>91.6%</td>
+                  <td>Aisle 3 · Shelf C</td>
+                </tr>
+                <tr>
+                  <td><span class="category-dot" style="--dot:#7fe8d9"></span>Fruits</td>
+                  <td>16</td>
+                  <td>89.3%</td>
+                  <td>Aisle 4 · Shelf A</td>
+                </tr>
+                <tr>
+                  <td><span class="category-dot" style="--dot:#2c3b57"></span>Vegetables</td>
+                  <td>10</td>
+                  <td>88.7%</td>
+                  <td>Aisle 4 · Shelf B</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ============ CHARTS: DISTRIBUTION + OCCUPANCY ============ -->
+        <section class="page-section charts-section">
+          <div class="charts-grid">
+
+            <div class="chart-panel">
+              <div class="chart-panel-head">
+                <p class="section-eyebrow">Per category</p>
+                <h3 class="chart-panel-title">Product distribution</h3>
+              </div>
+              <div class="bar-chart" id="barChart">
+                <div class="bar-chart-bars" id="barChartBars">
+                  <div class="bar-item"><span class="bar-fill" style="--h:63%; --c:#6366f1"></span><span class="bar-value">34</span><span class="bar-label">Dairy</span></div>
+                  <div class="bar-item"><span class="bar-fill" style="--h:39%; --c:#c8830f"></span><span class="bar-value">21</span><span class="bar-label">Bakery</span></div>
+                  <div class="bar-item"><span class="bar-fill" style="--h:52%; --c:#1fa15a"></span><span class="bar-value">28</span><span class="bar-label">Drinks</span></div>
+                  <div class="bar-item"><span class="bar-fill" style="--h:35%; --c:#c8461e"></span><span class="bar-value">19</span><span class="bar-label">Snacks</span></div>
+                  <div class="bar-item"><span class="bar-fill" style="--h:30%; --c:#7fe8d9"></span><span class="bar-value">16</span><span class="bar-label">Fruits</span></div>
+                  <div class="bar-item"><span class="bar-fill" style="--h:19%; --c:#2c3b57"></span><span class="bar-value">10</span><span class="bar-label">Veg.</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="chart-panel">
+              <div class="chart-panel-head">
+                <p class="section-eyebrow">Occupancy</p>
+                <h3 class="chart-panel-title">Shelf occupancy</h3>
+              </div>
+              <div class="doughnut-wrap">
+                <div class="doughnut-chart" id="doughnutChart" style="--pct:87">
+                  <div class="doughnut-center">
+                    <span class="doughnut-pct" id="doughnutPct">87%</span>
+                    <span class="doughnut-sub">Occupied</span>
+                  </div>
+                </div>
+                <div class="doughnut-legend">
+                  <div class="legend-row"><span class="legend-dot" style="background:var(--indigo-600)"></span> Occupied <strong id="legendOccupiedPct">87%</strong></div>
+                  <div class="legend-row"><span class="legend-dot" style="background:var(--bg-alt); border:1px solid var(--border)"></span> Empty <strong id="legendEmptyPct">13%</strong></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ============ DETECTION STATISTICS ============ -->
+        <section class="page-section stats-section">
+          <div class="section-head">
+            <div>
+              <p class="section-eyebrow">Statistics</p>
+              <h2 class="section-title" style="margin:0; text-align:left;">Detection statistics.</h2>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-label">Most Detected Product</span>
+              <span class="stat-value" id="statMostDetected">Dairy — Whole Milk 1L</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Least Detected Product</span>
+              <span class="stat-value" id="statLeastDetected">Vegetables — Roma Tomatoes</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Empty Sections</span>
+              <span class="stat-value" id="statEmptySections">9 sections</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Total Shelf Capacity</span>
+              <span class="stat-value" id="statTotalCapacity">147 slots</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Detection Processing Time</span>
+              <span class="stat-value" id="statProcessingTime">1.8s</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ AI INSIGHTS ============ -->
+        <section class="page-section insights-section">
+          <div class="section-head">
+            <div>
+              <p class="section-eyebrow">AI generated</p>
+              <h2 class="section-title" style="margin:0; text-align:left;">Insights &amp; recommendations.</h2>
+            </div>
+          </div>
+
+          <div class="insight-cards-grid" id="insightsGrid">
+            <div class="insight-card">
+              <span class="insight-icon">📦</span>
+              <p>Shelf A3 requires restocking — occupancy has dropped below 70%.</p>
+            </div>
+            <div class="insight-card">
+              <span class="insight-icon">🥤</span>
+              <p>Beverage shelf occupancy is below 80% and trending down this week.</p>
+            </div>
+            <div class="insight-card">
+              <span class="insight-icon">🥛</span>
+              <p>Dairy products are fully stocked across all monitored shelves.</p>
+            </div>
+            <div class="insight-card">
+              <span class="insight-icon">🍞</span>
+              <p>Bakery section has multiple empty spaces near the front display.</p>
+            </div>
+            <div class="insight-card">
+              <span class="insight-icon">⚡</span>
+              <p>High-demand products should be replenished soon to avoid stockouts.</p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+      <!-- /resultsWrapper -->
+
+      <!-- ============ RECENT ANALYSES ============ -->
+      <section class="page-section recent-analyses-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">History</p>
+            <h2 class="section-title" style="margin:0; text-align:left;">Recent analyses.</h2>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <table class="recent-table">
+            <thead>
+              <tr>
+                <th>Analysis ID</th>
+                <th>Date</th>
+                <th>Uploaded By</th>
+                <th>Products Detected</th>
+                <th>Empty Spaces</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="recentAnalysesBody">
+              <tr>
+                <td>#SM-1042</td>
+                <td>Jul 9, 2026 · 8:52 AM</td>
+                <td>Ahmed Hassan</td>
+                <td>128</td>
+                <td>9</td>
+                <td><span class="status-pill status-ready">Completed</span></td>
+                <td><button class="view-result-btn">View Result</button></td>
+              </tr>
+              <tr>
+                <td>#SM-1041</td>
+                <td>Jul 8, 2026 · 6:14 PM</td>
+                <td>Ahmed Hassan</td>
+                <td>112</td>
+                <td>14</td>
+                <td><span class="status-pill status-ready">Completed</span></td>
+                <td><button class="view-result-btn">View Result</button></td>
+              </tr>
+              <tr>
+                <td>#SM-1040</td>
+                <td>Jul 8, 2026 · 11:03 AM</td>
+                <td>Sara Youssef</td>
+                <td>—</td>
+                <td>—</td>
+                <td><span class="status-pill status-failed">Failed</span></td>
+                <td><button class="view-result-btn" disabled>View Result</button></td>
+              </tr>
+              <tr>
+                <td>#SM-1039</td>
+                <td>Jul 7, 2026 · 3:47 PM</td>
+                <td>Ahmed Hassan</td>
+                <td>96</td>
+                <td>7</td>
+                <td><span class="status-pill status-ready">Completed</span></td>
+                <td><button class="view-result-btn">View Result</button></td>
+              </tr>
+              <tr>
+                <td>#SM-1038</td>
+                <td>Jul 6, 2026 · 9:30 AM</td>
+                <td>Sara Youssef</td>
+                <td>—</td>
+                <td>—</td>
+                <td><span class="status-pill status-pending">Processing</span></td>
+                <td><button class="view-result-btn" disabled>View Result</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ QUICK ACTIONS ============ -->
+      <section class="page-section quick-actions-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Shortcuts</p>
+            <h2 class="section-title" style="margin:0; text-align:left;">Quick actions.</h2>
+          </div>
+        </div>
+
+        <div class="quick-actions-layout">
+          <div class="quick-actions-grid">
+            <button class="action-btn" id="qaUploadNew">
+              <span class="action-emoji">📤</span> Upload New Image
+            </button>
+            <button class="action-btn" id="qaRunAgain">
+              <span class="action-emoji">🔁</span> Run Detection Again
+            </button>
+            <button class="action-btn" id="qaDownloadResult">
+              <span class="action-emoji">🖼️</span> Download Result
+            </button>
+            <button class="action-btn" id="qaExportReport">
+              <span class="action-emoji">📄</span> Export Detection Report
+            </button>
+            <a class="action-btn" href="/admin/dashboard">
+              <span class="action-emoji">📊</span> Open Dashboard
+            </a>
+          </div>
+
+          <div class="engine-status-card">
+            <h3>Processing Status</h3>
+            <div class="status-row">
+              <span class="status-row-dot dot-green"></span>
+              <span class="status-row-label">AI Model Status</span>
+              <span class="status-row-value">Ready</span>
+            </div>
+            <div class="status-row">
+              <span class="status-row-dot dot-green"></span>
+              <span class="status-row-label">Detection Engine Status</span>
+              <span class="status-row-value">Online</span>
+            </div>
+            <div class="status-row">
+              <span class="status-row-dot dot-yellow"></span>
+              <span class="status-row-label">Last Model Update</span>
+              <span class="status-row-value">5 days ago</span>
+            </div>
+            <div class="status-row">
+              <span class="status-row-dot dot-green"></span>
+              <span class="status-row-label">Avg. Processing Time</span>
+              <span class="status-row-value">1.9s / image</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="site-footer admin-footer">
+      <div class="footer-inner">
+        <div class="brand brand-footer">
+          <img src="/static/images/logo.png" alt="RetailIQ logo" class="brand-mark brand-mark-sm">
+          <span class="brand-name brand-name-sm">Retail<span class="accent">IQ</span></span>
+        </div>
+        <p class="footer-line">Smart Retail Mentoring Eco-System — Admin Console</p>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script src="/static/js/admin-main.js"></script>
+<script src="/static/js/shelf-monitoring.js"></script>
+</body>
+</html>

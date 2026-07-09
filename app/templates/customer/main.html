@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RetailIQ — My RetailIQ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/home.css">
+  <link rel="stylesheet" href="/static/css/customer-main.css">
+</head>
+<body>
+
+<!-- background circuit / pulse layer -->
+<div class="bg-field" aria-hidden="true">
+  <svg class="pulse-line" viewBox="0 0 1600 400" preserveAspectRatio="none">
+    <path class="pulse-path" d="M0,200 L120,200 L150,120 L190,280 L230,60 L270,200 L420,200 L450,160 L480,200 L620,200 L650,90 L690,310 L730,200 L900,200 L930,150 L965,200 L1120,200 L1150,110 L1190,290 L1230,200 L1600,200"/>
+  </svg>
+</div>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <div class="brand">
+      <img src="/static/images/logo.png" alt="RetailIQ logo" class="brand-mark">
+      <div class="brand-text">
+        <span class="brand-name">Retail<span class="accent">IQ</span></span>
+        <span class="brand-line">Smart Retail Mentoring Eco-System</span>
+      </div>
+    </div>
+    <nav class="site-nav customer-nav">
+      <a href="/customer/main" class="is-active">Home</a>
+      <a href="/customer/dashboard">Dashboard</a>
+      <a href="/customer/assistant">AI Assistant</a>
+
+      <div class="user-menu" id="userMenu">
+        <button class="user-menu-trigger" id="userMenuTrigger" aria-haspopup="true" aria-expanded="false">
+          <span class="user-avatar" id="userAvatarInitial">{{ first_name[0].upper() }}</span>
+          <span class="user-name" id="userNameLabel">{{ user.full_name }}</span>
+        </button>
+        <div class="user-dropdown" role="menu">
+          <a href="/customer/profile" role="menuitem">My Profile</a>
+          <a href="/customer/purchases" role="menuitem">My Purchases</a>
+          <button class="logout-item" id="logoutBtn" role="menuitem">Log Out</button>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ============ HERO ============ -->
+  <section class="customer-hero wrap">
+    <div class="greeting-row">
+      <div class="greeting-avatar" id="heroAvatarInitial">{{ first_name[0].upper() }}</div>
+      <div class="greeting-text">
+        <p class="eyebrow" id="greetingWord">Good Morning</p>
+        <h1 class="greeting-name">Welcome back, <span id="customerFirstName">{{ first_name }}</span>.</h1>
+        <p class="greeting-sub">Explore your personalized shopping experience powered by RetailIQ AI.</p>
+      </div>
+    </div>
+
+    <div class="hero-meta-row">
+      <span class="meta-pill"><strong id="currentDate">—</strong></span>
+      <span class="meta-pill"><strong id="currentTime">—</strong></span>
+      <span class="meta-pill" id="storeStatusPill">
+        <span class="status-dot"></span> <strong id="storeStatusText">Checking store…</strong>
+      </span>
+    </div>
+  </section>
+
+  <!-- ============ QUICK ACCESS ============ -->
+  <section class="page-section quick-access-section wrap">
+    <div class="section-head">
+      <div>
+        <p class="section-eyebrow">Jump back in</p>
+        <h2 class="section-title" style="margin:0;">Everything you need, one tap away.</h2>
+      </div>
+    </div>
+
+    <div class="quick-access-grid">
+      <a class="access-card" href="/customer/dashboard">
+        <div class="access-emoji">📊</div>
+        <h3>Dashboard</h3>
+        <p>View your shopping statistics, spending insights, favorite products, and personalized recommendations.</p>
+        <span class="access-btn">Open Dashboard →</span>
+      </a>
+
+      <a class="access-card" href="/customer/assistant">
+        <div class="access-emoji">🤖</div>
+        <h3>AI Shopping Assistant</h3>
+        <p>Ask questions about products, offers, prices, availability, healthy alternatives, and recommendations.</p>
+        <span class="access-btn">Chat with AI →</span>
+      </a>
+
+      <a class="access-card" href="/customer/purchases">
+        <div class="access-emoji">🛒</div>
+        <h3>Purchases</h3>
+        <p>Browse your previous orders, invoices, spending history, and purchase analytics.</p>
+        <span class="access-btn">View Purchases →</span>
+      </a>
+
+      <a class="access-card" href="/customer/profile">
+        <div class="access-emoji">👤</div>
+        <h3>Profile</h3>
+        <p>Manage your personal information, preferences, account security, and loyalty details.</p>
+        <span class="access-btn">Open Profile →</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ FEATURED OFFERS ============ -->
+  <section class="page-section offers-section wrap">
+    <div class="section-head">
+      <div>
+        <p class="section-eyebrow">Don't miss out</p>
+        <h2 class="section-title" style="margin:0;">Featured offers, picked for today.</h2>
+      </div>
+      <a href="#" class="section-link">See all offers →</a>
+    </div>
+
+    <div class="offers-rail-wrap">
+      <button class="rail-btn prev" id="offersPrev" aria-label="Scroll offers left">‹</button>
+      <div class="offers-rail" id="offersRail">
+        
+        {% if offers %}
+          {% for offer in offers %}
+          <article class="offer-card" data-product="{{ offer.product_name }}">
+            <div class="offer-image">
+              {% if offer.image_url and offer.image_url.startswith(('http', '/')) %}
+                <img src="{{ offer.image_url }}" alt="{{ offer.product_name }}" style="width:40px; height:40px; object-fit:contain;">
+              {% else %}
+                {{ offer.image_url or '🏷️' }}
+              {% endif %}
+              <span class="offer-badge">-{{ offer.discount_percentage }}%</span>
+            </div>
+            <div class="offer-body">
+              <h3 class="offer-name">{{ offer.product_name }}</h3>
+              <div class="offer-price-row">
+                <span class="price-original">EGP {{ offer.original_price }}</span>
+                <span class="price-discounted">EGP {{ offer.discounted_price }}</span>
+              </div>
+              <span class="offer-timer live-countdown" data-expires="{{ offer.end_date_iso }}">Calculating...</span>
+            </div>
+          </article>
+          {% endfor %}
+        {% else %}
+          <p class="no-offers-msg" style="padding: 20px; color: var(--text-muted, #888);">No featured offers running at this hour. Check back soon!</p>
+        {% endif %}
+
+      </div>
+      <button class="rail-btn next" id="offersNext" aria-label="Scroll offers right">›</button>
+    </div>
+  </section>
+
+  <!-- ============ FEATURED CATEGORIES ============ -->
+  <section class="page-section categories-section wrap">
+    <div class="section-head">
+      <div>
+        <p class="section-eyebrow">Shop by category</p>
+        <h2 class="section-title" style="margin:0;">Find what you need, faster.</h2>
+      </div>
+    </div>
+
+    <div class="categories-grid">
+      <a class="category-card" href="#">
+        <div class="category-emoji">🥛</div>
+        <p class="category-name">Dairy</p>
+        <p class="category-count">86 products</p>
+      </a>
+      <a class="category-card" href="#">
+        <div class="category-emoji">🍪</div>
+        <p class="category-name">Snacks</p>
+        <p class="category-count">142 products</p>
+      </a>
+      <a class="category-card" href="#">
+        <div class="category-emoji">🥤</div>
+        <p class="category-name">Drinks</p>
+        <p class="category-count">97 products</p>
+      </a>
+      <a class="category-card" href="#">
+        <div class="category-emoji">🍞</div>
+        <p class="category-name">Bakery</p>
+        <p class="category-count">54 products</p>
+      </a>
+      <a class="category-card" href="#">
+        <div class="category-emoji">🍎</div>
+        <p class="category-name">Fruits</p>
+        <p class="category-count">63 products</p>
+      </a>
+      <a class="category-card" href="#">
+        <div class="category-emoji">🥦</div>
+        <p class="category-name">Vegetables</p>
+        <p class="category-count">71 products</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ RECOMMENDED PRODUCTS ============ -->
+  <section class="page-section products-section wrap">
+    <div class="section-head">
+      <div>
+        <p class="section-eyebrow">Just for you</p>
+        <h2 class="section-title" style="margin:0;">Recommended based on your shopping.</h2>
+      </div>
+      <a href="/customer/dashboard" class="section-link">More insights →</a>
+    </div>
+
+    <div class="products-grid" id="productsGrid">
+      <article class="product-card" data-id="p1">
+        <div class="product-image">
+          🧀
+          <button class="fav-btn" data-fav-id="p1" aria-label="Add to favorites">♡</button>
+        </div>
+        <div class="product-body">
+          <span class="product-category">Dairy</span>
+          <h3 class="product-name">Aged Cheddar Cheese 250g</h3>
+          <span class="product-rating">★★★★<span>(4.2)</span></span>
+          <div class="product-footer">
+            <span class="product-price">EGP 118</span>
+            <button class="product-view-btn">View Details</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="product-card" data-id="p2">
+        <div class="product-image">
+          🥜
+          <button class="fav-btn" data-fav-id="p2" aria-label="Add to favorites">♡</button>
+        </div>
+        <div class="product-body">
+          <span class="product-category">Snacks</span>
+          <h3 class="product-name">Roasted Mixed Nuts 300g</h3>
+          <span class="product-rating">★★★★★<span>(4.8)</span></span>
+          <div class="product-footer">
+            <span class="product-price">EGP 165</span>
+            <button class="product-view-btn">View Details</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="product-card" data-id="p3">
+        <div class="product-image">
+          🍊
+          <button class="fav-btn" data-fav-id="p3" aria-label="Add to favorites">♡</button>
+        </div>
+        <div class="product-body">
+          <span class="product-category">Fruits</span>
+          <h3 class="product-name">Valencia Oranges 1kg</h3>
+          <span class="product-rating">★★★★<span>(4.1)</span></span>
+          <div class="product-footer">
+            <span class="product-price">EGP 45</span>
+            <button class="product-view-btn">View Details</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="product-card" data-id="p4">
+        <div class="product-image">
+          🥕
+          <button class="fav-btn" data-fav-id="p4" aria-label="Add to favorites">♡</button>
+        </div>
+        <div class="product-body">
+          <span class="product-category">Vegetables</span>
+          <h3 class="product-name">Fresh Carrots 1kg</h3>
+          <span class="product-rating">★★★<span>(3.9)</span></span>
+          <div class="product-footer">
+            <span class="product-price">EGP 28</span>
+            <button class="product-view-btn">View Details</button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ STORE INFORMATION ============ -->
+  <section class="page-section store-info-section wrap">
+    <div class="store-info-panel">
+      <div class="info-item">
+        <span class="info-label">Store Status</span>
+        <span class="info-value" id="infoStoreStatus">—</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Opening Hours</span>
+        <span class="info-value">9:00 AM</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Closing Hours</span>
+        <span class="info-value">11:00 PM</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Active Offers</span>
+        <span class="info-value">5</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Total Products</span>
+        <span class="info-value">1,240</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SMART TIPS ============ -->
+  <section class="page-section tips-section wrap">
+    <div class="tips-panel">
+      <div class="tip-icon">💡</div>
+      <p class="tip-text" id="tipText">Check today's offers before shopping.</p>
+      <div class="tip-dots" id="tipDots"></div>
+    </div>
+  </section>
+
+  <!-- ============ RETAILIQ FEATURES ============ -->
+  <section class="page-section features wrap" style="padding-top:10px;">
+    <p class="section-eyebrow">Why RetailIQ</p>
+    <h2 class="section-title">The eco-system behind every recommendation.</h2>
+
+    <div class="feature-grid">
+      <article class="feature-card">
+        <div class="feature-icon" data-icon="assistant"></div>
+        <h3>AI Shopping Assistant</h3>
+        <p>Personalized product recommendations and instant answers, whenever you need them.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon" data-icon="forecast"></div>
+        <h3>Smart Analytics</h3>
+        <p>Track your spending and shopping habits with insights that actually help.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon" data-icon="inventory"></div>
+        <h3>Exclusive Offers</h3>
+        <p>Discover personalized discounts and promotions picked for your basket.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon" data-icon="traffic"></div>
+        <h3>Fast Shopping</h3>
+        <p>Find products quickly using intelligent search across every category.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ RECENT ACTIVITY ============ -->
+  <section class="page-section activity-section wrap">
+    <div class="section-head">
+      <div>
+        <p class="section-eyebrow">Your recent activity</p>
+        <h2 class="section-title" style="margin:0;">What you've been up to.</h2>
+      </div>
+    </div>
+
+    <div class="activity-timeline">
+      <div class="activity-item">
+        <div class="activity-icon">🔐</div>
+        <div class="activity-content">
+          <p class="activity-text">Logged in to RetailIQ</p>
+          <span class="activity-time">Today, 8:42 AM</span>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-icon">🛒</div>
+        <div class="activity-content">
+          <p class="activity-text">Purchased Order #245</p>
+          <span class="activity-time">Yesterday, 6:15 PM</span>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-icon">🤖</div>
+        <div class="activity-content">
+          <p class="activity-text">Used the AI Assistant to compare bread prices</p>
+          <span class="activity-time">Yesterday, 4:02 PM</span>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-icon">👤</div>
+        <div class="activity-content">
+          <p class="activity-text">Updated profile details</p>
+          <span class="activity-time">2 days ago</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BOTTOM CTA ============ -->
+  <section class="page-section cta-band wrap" style="padding-top:10px;">
+    <div class="cta-band-inner">
+      <div>
+        <h2>Ready to continue your shopping journey?</h2>
+        <p>Your dashboard, assistant, and offers are always one click away.</p>
+      </div>
+      <div class="hero-actions" style="margin:0;">
+        <a href="/customer/dashboard" class="btn btn-primary">Open Dashboard</a>
+        <a href="/customer/assistant" class="btn btn-ghost" style="background:transparent;border-color:rgba(255,255,255,0.3);color:#fff;">Chat with AI</a>
+        <a href="#" class="btn btn-ghost" style="background:transparent;border-color:rgba(255,255,255,0.3);color:#fff;">Browse Offers</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="brand brand-footer">
+      <img src="/static/images/logo.png" alt="RetailIQ logo" class="brand-mark brand-mark-sm">
+      <span class="brand-name brand-name-sm">Retail<span class="accent">IQ</span></span>
+    </div>
+    <p class="footer-line">Smart Retail Mentoring Eco-System</p>
+  </div>
+</footer>
+
+<script src="/static/js/customer-main.js"></script>
+</body>
+</html>

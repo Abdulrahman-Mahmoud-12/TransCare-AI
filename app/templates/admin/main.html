@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RetailIQ — Admin Main</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/home.css">
+  <link rel="stylesheet" href="/static/css/admin-main.css">
+</head>
+<body class="admin-body">
+
+<div class="admin-shell">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-brand">
+      <img src="/static/images/logo.png" alt="RetailIQ logo" class="brand-mark brand-mark-sm">
+      <div class="brand-text">
+        <span class="brand-name brand-name-sm">Retail<span class="accent">IQ</span></span>
+        <span class="brand-line">Admin Console</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="/admin/main" class="sidebar-link is-active" data-icon="overview">
+        <span class="sidebar-icon"></span> Overview
+      </a>
+      <a href="/admin/dashboard" class="sidebar-link" data-icon="dashboard">
+        <span class="sidebar-icon"></span> Dashboard
+      </a>
+      <a href="/admin/shelf-monitoring" class="sidebar-link" data-icon="shelf">
+        <span class="sidebar-icon"></span> Shelf Monitoring
+      </a>
+      <a href="/admin/reports" class="sidebar-link" data-icon="reports">
+        <span class="sidebar-icon"></span> Business Reports
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="/admin/settings" class="sidebar-link" data-icon="settings">
+        <span class="sidebar-icon"></span> Settings
+      </a>
+      <button class="sidebar-link sidebar-logout" id="sidebarLogoutBtn" data-icon="logout">
+        <span class="sidebar-icon"></span> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- ============ CONTENT ============ -->
+  <div class="admin-content">
+
+    <!-- ============ TOPBAR ============ -->
+    <header class="admin-topbar">
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+
+      <div class="topbar-search">
+        <span class="search-icon" aria-hidden="true"></span>
+        <input type="text" placeholder="Search products, orders, reports…" id="globalSearchInput">
+      </div>
+
+      <div class="topbar-actions">
+        <div class="icon-menu" id="notifMenu">
+          <button class="icon-btn" id="notifBtn" aria-haspopup="true" aria-expanded="false" aria-label="Notifications">
+            🔔<span class="badge-dot" id="notifBadge">3</span>
+          </button>
+          <div class="icon-dropdown" role="menu">
+            <p class="icon-dropdown-title">Notifications</p>
+            <div class="notif-item"><span class="notif-dot dot-yellow"></span> Low stock: Whole Milk 1L <span class="notif-time">12m</span></div>
+            <div class="notif-item"><span class="notif-dot dot-red"></span> Empty shelf detected — Aisle 3 <span class="notif-time">40m</span></div>
+            <div class="notif-item"><span class="notif-dot dot-green"></span> Weekly report generated <span class="notif-time">2h</span></div>
+          </div>
+        </div>
+
+        <div class="icon-menu" id="alertsMenu">
+          <button class="icon-btn" id="alertsBtn" aria-haspopup="true" aria-expanded="false" aria-label="System alerts">
+            ⚠️<span class="badge-dot is-alert" id="alertsBadge">2</span>
+          </button>
+          <div class="icon-dropdown" role="menu">
+            <p class="icon-dropdown-title">System Alerts</p>
+            <div class="notif-item"><span class="notif-dot dot-red"></span> Forecasting engine job failed <span class="notif-time">1h</span></div>
+            <div class="notif-item"><span class="notif-dot dot-yellow"></span> AI service latency elevated <span class="notif-time">3h</span></div>
+          </div>
+        </div>
+
+        <button class="icon-btn" id="settingsBtn" aria-label="Settings" onclick="window.location.href='/admin/settings'">⚙️</button>
+
+        <div class="admin-profile" id="adminProfileMenu">
+          <button class="profile-trigger" id="profileTrigger" aria-haspopup="true" aria-expanded="false">
+            <span class="profile-avatar" id="profileAvatarInitial">{{ first_name[0].upper() }}</span>
+            <span class="profile-meta">
+              <span class="profile-name" id="adminNameLabel">{{ user.full_name }}</span>
+              <span class="role-badge">Manager</span>
+            </span>
+          </button>
+          <div class="profile-dropdown" role="menu">
+            <a href="/admin/settings" role="menuitem">Settings</a>
+            <button class="logout-item" id="logoutBtn" role="menuitem">Log Out</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-main">
+
+      <!-- ============ HERO ============ -->
+      <section class="admin-hero">
+        <div class="admin-hero-text">
+          <p class="eyebrow" id="greetingWord">Good Morning</p>
+          <h1 class="greeting-name">Welcome back, <span id="adminFirstName">{{ first_name }}</span> {{ user.last_name if user else '' }}</h1>
+          <p class="greeting-sub">RetailIQ Smart Retail Management Center — your operational control hub.</p>
+
+          <div class="hero-meta-row">
+            <span class="meta-pill"><strong id="currentDate">—</strong></span>
+            <span class="meta-pill"><strong id="currentTime">—</strong></span>
+            <span class="meta-pill" id="storeStatusPill">
+              <span class="status-dot"></span> <strong id="storeStatusText">Checking store…</strong>
+            </span>
+            <span class="meta-pill"><strong id="activeCustomersCount">64</strong> active customers</span>
+            <span class="meta-pill">Last sync <strong id="lastSyncTime">2 min ago</strong></span>
+          </div>
+        </div>
+
+        <div class="admin-hero-illustration" aria-hidden="true">
+          <div class="illustration-ring"></div>
+          <div class="illustration-bars">
+            <span style="--h:38%"></span>
+            <span style="--h:62%"></span>
+            <span style="--h:48%"></span>
+            <span style="--h:80%"></span>
+            <span style="--h:56%"></span>
+            <span style="--h:70%"></span>
+          </div>
+          <div class="illustration-pulse"></div>
+        </div>
+      </section>
+
+      <!-- ============ RETAIL STATUS OVERVIEW ============ -->
+      <section class="page-section status-overview-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">At a glance</p>
+            <h2 class="section-title" style="margin:0; text-align: left;">Retail status overview.</h2>
+          </div>
+        </div>
+
+        <div class="status-cards-grid">
+          <div class="status-card">
+            <div class="status-card-icon" data-icon="store"></div>
+            <div class="status-card-indicator dot-green" id="statusCardStoreDot"></div>
+            <span class="status-card-value" id="statusCardStoreValue">Open</span>
+            <span class="status-card-label">Retail Status</span>
+            <p class="status-card-desc">Store is currently trading normally.</p>
+          </div>
+
+          <div class="status-card">
+            <div class="status-card-icon" data-icon="health"></div>
+            <div class="status-card-indicator dot-green"></div>
+            <span class="status-card-value">96%</span>
+            <span class="status-card-label">Inventory Health</span>
+            <p class="status-card-desc">Stock levels healthy across categories.</p>
+          </div>
+
+          <div class="status-card">
+            <div class="status-card-icon" data-icon="offers"></div>
+            <div class="status-card-indicator dot-green"></div>
+            <span class="status-card-value">5</span>
+            <span class="status-card-label">Active Offers</span>
+            <p class="status-card-desc">Running promotions across the store.</p>
+          </div>
+
+          <div class="status-card">
+            <div class="status-card-icon" data-icon="lowstock"></div>
+            <div class="status-card-indicator dot-yellow"></div>
+            <span class="status-card-value">7</span>
+            <span class="status-card-label">Low Stock Alerts</span>
+            <p class="status-card-desc">Products approaching reorder threshold.</p>
+          </div>
+
+          <div class="status-card">
+            <div class="status-card-icon" data-icon="pending"></div>
+            <div class="status-card-indicator dot-yellow"></div>
+            <span class="status-card-value">2</span>
+            <span class="status-card-label">Pending Reports</span>
+            <p class="status-card-desc">Reports queued for generation.</p>
+          </div>
+
+          <div class="status-card">
+            <div class="status-card-icon" data-icon="ai"></div>
+            <div class="status-card-indicator dot-green"></div>
+            <span class="status-card-value">Online</span>
+            <span class="status-card-label">AI Services Status</span>
+            <p class="status-card-desc">Detection, forecasting &amp; RAG online.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ QUICK ACCESS MODULES ============ -->
+      <section class="page-section modules-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Quick access</p>
+            <h2 class="section-title" style="margin:0; text-align: left;">Manage every part of your store.</h2>
+          </div>
+        </div>
+
+        <div class="modules-grid">
+          <a class="module-card" href="/admin/dashboard">
+            <div class="module-emoji">📊</div>
+            <h3>Dashboard</h3>
+            <p>View complete retail analytics including revenue, sales, inventory statistics, and operational KPIs.</p>
+            <span class="module-btn">Open Dashboard →</span>
+          </a>
+
+          <a class="module-card" href="/admin/shelf-monitoring">
+            <div class="module-emoji">📷</div>
+            <h3>Shelf Monitoring</h3>
+            <p>Upload shelf images, run AI product detection, monitor empty shelf spaces, and analyze product availability.</p>
+            <span class="module-btn">Open Shelf Monitoring →</span>
+          </a>
+
+          <a class="module-card" href="/admin/forecasting">
+            <div class="module-emoji">📈</div>
+            <h3>AI Forecasting</h3>
+            <p>Analyze future sales, predict demand, estimate profit, and monitor inventory forecasts.</p>
+            <span class="module-btn">Open Forecasting →</span>
+          </a>
+
+          <a class="module-card" href="/admin/insights">
+            <div class="module-emoji">👥</div>
+            <h3>Customer Insights</h3>
+            <p>Explore customer segmentation, purchasing behavior, return predictions, and shopping trends.</p>
+            <span class="module-btn">View Insights →</span>
+          </a>
+
+          <a class="module-card" href="/admin/reports">
+            <div class="module-emoji">📄</div>
+            <h3>Business Reports</h3>
+            <p>Generate AI-powered business reports and export PDF summaries.</p>
+            <span class="module-btn">Generate Reports →</span>
+          </a>
+
+          <a class="module-card" href="/admin/inventory">
+            <div class="module-emoji">📦</div>
+            <h3>Inventory Management</h3>
+            <p>Manage products, categories, stock quantities, offers, and inventory updates.</p>
+            <span class="module-btn">Manage Inventory →</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- ============ OPERATIONAL SUMMARY ============ -->
+      <section class="page-section operational-summary-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Operational summary</p>
+            <h2 class="section-title" style="margin:0; text-align: left;">The store, in numbers.</h2>
+          </div>
+        </div>
+
+        <div class="summary-cards-grid">
+          <div class="summary-card"><span class="summary-value">{{ summary.total_products }}</span><span class="summary-label">Total Products</span></div>
+          <div class="summary-card"><span class="summary-value">{{ summary.categories_count }}</span><span class="summary-label">Categories</span></div>
+          <div class="summary-card"><span class="summary-value">{{ summary.in_stock_count }}</span><span class="summary-label">Products in Stock</span></div>
+          <div class="summary-card"><span class="summary-value {% if summary.out_of_stock_count > 0 %}alert-text{% endif %}">{{ summary.out_of_stock_count }}</span><span class="summary-label">Out-of-Stock Products</span></div>
+          <div class="summary-card"><span class="summary-value">{{ summary.active_promotions }}</span><span class="summary-label">Active Promotions</span></div>
+          <div class="summary-card"><span class="summary-value">{{ summary.registered_customers }}</span><span class="summary-label">Registered Customers</span></div>
+          <div class="summary-card"><span class="summary-value">{{ summary.orders_today }}</span><span class="summary-label">Orders Today</span></div>
+          <div class="summary-card"><span class="summary-value">EGP {{ "{:,.2f}".format(summary.revenue_today) }}</span><span class="summary-label">Revenue Today</span></div>
+        </div>
+      </section>
+
+      <!-- ============ SYSTEM HEALTH ============ -->
+      <section class="page-section system-health-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Ecosystem health</p>
+            <h2 class="section-title" style="margin:0; text-align: left;">Is everything running well?</h2>
+          </div>
+        </div>
+
+        <div class="health-grid">
+          {% for system in system_health %}
+          <div class="health-card">
+            <span class="health-dot dot-{{ system.color }}"></span>
+            <div class="health-body">
+              <span class="health-name">{{ system.name }}</span>
+              <span class="health-status">{{ system.status }}</span>
+              <span class="health-sync">{{ system.sync }}</span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <!-- ============ CRITICAL ALERTS ============ -->
+      <section class="page-section alerts-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Needs attention</p>
+            <h2 class="section-title" style="margin:0; text-align: left;">Critical alerts.</h2>
+          </div>
+          <a href="/admin/dashboard" class="section-link">View all →</a>
+        </div>
+
+        <div class="alerts-list" id="alertsList">
+          {% if critical_alerts %}
+            {% for alert in critical_alerts %}
+            <div class="alert-item priority-{{ alert.priority }}">
+              <span class="alert-icon">{{ alert.icon }}</span>
+              <div class="alert-body">
+                <p class="alert-text">{{ alert.text }}</p>
+                <span class="alert-time">{{ alert.time }}</span>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <p class="empty-dropdown-text" style="padding: 20px; text-align: center; color: var(--text-muted);">No critical operational alerts recorded at this time.</p>
+          {% endif %}
+        </div>
+      </section>
+
+      <!-- ============ TODAY'S HIGHLIGHTS ============ -->
+      <section class="page-section highlights-section">
+        <div class="highlights-panel">
+          <div class="info-item">
+            <span class="info-label">New Orders</span>
+            <span class="info-value">86</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Revenue Generated</span>
+            <span class="info-value">EGP 24,860</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Products Sold</span>
+            <span class="info-value">412</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Most Sold Category</span>
+            <span class="info-value">Dairy</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Most Viewed Product</span>
+            <span class="info-value">Organic Milk 1L</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Active Customers</span>
+            <span class="info-value">64</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Shelf Scans Completed</span>
+            <span class="info-value">19</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ AI ASSISTANT SHORTCUT ============ -->
+      <section class="page-section ai-shortcut-section">
+        <div class="ai-shortcut-panel">
+          <div class="ai-shortcut-icon">🤖</div>
+          <div class="ai-shortcut-text">
+            <h3>Let RetailIQ AI do the heavy lifting.</h3>
+            <p>Let RetailIQ AI help you analyze your retail performance, generate business insights, and identify operational opportunities.</p>
+          </div>
+          <a href="/admin/insights" class="btn btn-primary ai-shortcut-btn">Open AI Analytics</a>
+        </div>
+      </section>
+
+      <!-- ============ BUSINESS TIPS ============ -->
+      <section class="page-section tips-section">
+        <div class="tips-panel">
+          <div class="tip-icon">💡</div>
+          <p class="tip-text" id="tipText">Restock Dairy products before tomorrow.</p>
+          <div class="tip-dots" id="tipDots"></div>
+        </div>
+      </section>
+
+      <!-- ============ RECENT REPORTS ============ -->
+      <section class="page-section reports-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Latest output</p>
+            <h2 class="section-title" style="margin:0;">Recent reports.</h2>
+          </div>
+          <a href="/admin/reports" class="section-link">All reports →</a>
+        </div>
+
+        <div class="reports-grid">
+          <article class="report-card">
+            <div class="report-card-head">
+              <span class="report-type">Daily Sales Report</span>
+              <span class="report-status status-ready">Ready</span>
+            </div>
+            <p class="report-meta">Generated Jul 7, 2026 · by Ahmed Hassan</p>
+            <button class="report-download-btn">Download PDF</button>
+          </article>
+
+          <article class="report-card">
+            <div class="report-card-head">
+              <span class="report-type">Weekly Inventory Report</span>
+              <span class="report-status status-ready">Ready</span>
+            </div>
+            <p class="report-meta">Generated Jul 6, 2026 · by Ahmed Hassan</p>
+            <button class="report-download-btn">Download PDF</button>
+          </article>
+
+          <article class="report-card">
+            <div class="report-card-head">
+              <span class="report-type">Customer Insights Report</span>
+              <span class="report-status status-pending">Pending</span>
+            </div>
+            <p class="report-meta">Requested Jul 7, 2026 · by Ahmed Hassan</p>
+            <button class="report-download-btn" disabled>Download PDF</button>
+          </article>
+
+          <article class="report-card">
+            <div class="report-card-head">
+              <span class="report-type">Demand Forecast Report</span>
+              <span class="report-status status-failed">Failed</span>
+            </div>
+            <p class="report-meta">Attempted Jul 7, 2026 · by System</p>
+            <button class="report-download-btn" disabled>Retry</button>
+          </article>
+        </div>
+      </section>
+
+      <!-- ============ RECENT ADMINISTRATIVE ACTIVITY ============ -->
+      <section class="page-section activity-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Audit trail</p>
+            <h2 class="section-title" style="margin:0;">Recent administrative activity.</h2>
+          </div>
+        </div>
+
+        <div class="activity-timeline">
+          <div class="activity-item">
+            <div class="activity-icon">📦</div>
+            <div class="activity-content">
+              <p class="activity-text">Updated inventory for Dairy category</p>
+              <span class="activity-time">Today, 9:12 AM</span>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">📄</div>
+            <div class="activity-content">
+              <p class="activity-text">Generated monthly business report</p>
+              <span class="activity-time">Today, 8:30 AM</span>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">📷</div>
+            <div class="activity-content">
+              <p class="activity-text">Uploaded shelf image — Aisle 3</p>
+              <span class="activity-time">Yesterday, 5:47 PM</span>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">🆕</div>
+            <div class="activity-content">
+              <p class="activity-text">Added new product: Sourdough Bakery Loaf</p>
+              <span class="activity-time">Yesterday, 3:20 PM</span>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">🏷️</div>
+            <div class="activity-content">
+              <p class="activity-text">Modified offer: Sparkling Water 6-Pack</p>
+              <span class="activity-time">2 days ago</span>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">🗂️</div>
+            <div class="activity-content">
+              <p class="activity-text">Updated category: Snacks</p>
+              <span class="activity-time">3 days ago</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ BOTTOM CTA ============ -->
+      <section class="page-section cta-band" style="padding-top:10px;">
+        <div class="cta-band-inner">
+          <div>
+            <h2>Everything you need to operate your smart retail business.</h2>
+            <p>Dashboard, shelf monitoring, and reports are always one click away.</p>
+          </div>
+          <div class="hero-actions" style="margin:0;">
+            <a href="/admin/dashboard" class="btn btn-primary">Open Dashboard</a>
+            <a href="/admin/shelf-monitoring" class="btn btn-ghost" style="background:transparent;border-color:rgba(255,255,255,0.3);color:#fff;">Monitor Shelves</a>
+            <a href="/admin/reports" class="btn btn-ghost" style="background:transparent;border-color:rgba(255,255,255,0.3);color:#fff;">Generate Reports</a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="site-footer admin-footer">
+      <div class="footer-inner">
+        <div class="brand brand-footer">
+          <img src="/static/images/logo.png" alt="RetailIQ logo" class="brand-mark brand-mark-sm">
+          <span class="brand-name brand-name-sm">Retail<span class="accent">IQ</span></span>
+        </div>
+        <p class="footer-line">Smart Retail Mentoring Eco-System — Admin Console</p>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script src="/static/js/admin-main.js"></script>
+</body>
+</html>

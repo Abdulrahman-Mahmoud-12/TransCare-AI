@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RetailIQ — Admin Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/home.css">
+  <link rel="stylesheet" href="/static/css/admin-main.css">
+  <link rel="stylesheet" href="/static/css/admin-dashboard.css">
+</head>
+<body class="admin-body">
+
+<div class="admin-shell">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-brand">
+      <img src="/static/images/logo.png" alt="RetailIQ logo" class="brand-mark brand-mark-sm">
+      <div class="brand-text">
+        <span class="brand-name brand-name-sm">Retail<span class="accent">IQ</span></span>
+        <span class="brand-line">Admin Console</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="/admin/main" class="sidebar-link" data-icon="overview">
+        <span class="sidebar-icon"></span> Overview
+      </a>
+      <a href="/admin/dashboard" class="sidebar-link is-active" data-icon="dashboard">
+        <span class="sidebar-icon"></span> Dashboard
+      </a>
+      <a href="/admin/shelf-monitoring" class="sidebar-link" data-icon="shelf">
+        <span class="sidebar-icon"></span> Shelf Monitoring
+      </a>
+      <a href="/admin/reports" class="sidebar-link" data-icon="reports">
+        <span class="sidebar-icon"></span> Business Reports
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="/admin/settings" class="sidebar-link" data-icon="settings">
+        <span class="sidebar-icon"></span> Settings
+      </a>
+      <button class="sidebar-link sidebar-logout" id="sidebarLogoutBtn" data-icon="logout">
+        <span class="sidebar-icon"></span> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- ============ CONTENT ============ -->
+  <div class="admin-content">
+
+    <!-- ============ TOPBAR ============ -->
+    <header class="admin-topbar">
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+
+      <div class="topbar-search">
+        <span class="search-icon" aria-hidden="true"></span>
+        <input type="text" placeholder="Search products, orders, reports…" id="globalSearchInput">
+      </div>
+
+      <div class="topbar-actions">
+        <div class="ai-status-pill" id="aiStatusPill" title="AI services status">
+          <span class="ai-status-dot"></span> AI Online
+        </div>
+
+        <div class="icon-menu" id="notifMenu">
+          <button class="icon-btn" id="notifBtn" aria-haspopup="true" aria-expanded="false" aria-label="Notifications">
+            🔔<span class="badge-dot" id="notifBadge">5</span>
+          </button>
+          <div class="icon-dropdown" role="menu">
+            <p class="icon-dropdown-title">Notifications</p>
+            <div class="notif-item"><span class="notif-dot dot-yellow"></span> Inventory below minimum <span class="notif-time">6m</span></div>
+            <div class="notif-item"><span class="notif-dot dot-red"></span> Shelf occupancy dropped below 90% <span class="notif-time">28m</span></div>
+            <div class="notif-item"><span class="notif-dot dot-green"></span> Daily report generated <span class="notif-time">1h</span></div>
+            <div class="notif-item"><span class="notif-dot dot-green"></span> AI forecast completed <span class="notif-time">2h</span></div>
+            <div class="notif-item"><span class="notif-dot dot-green"></span> Product detection finished <span class="notif-time">3h</span></div>
+          </div>
+        </div>
+
+        <div class="icon-menu" id="alertsMenu">
+          <button class="icon-btn" id="alertsBtn" aria-haspopup="true" aria-expanded="false" aria-label="System alerts">
+            ⚠️<span class="badge-dot is-alert" id="alertsBadge">2</span>
+          </button>
+          <div class="icon-dropdown" role="menu">
+            <p class="icon-dropdown-title">System Alerts</p>
+            <div class="notif-item"><span class="notif-dot dot-red"></span> Forecasting engine job failed <span class="notif-time">1h</span></div>
+            <div class="notif-item"><span class="notif-dot dot-yellow"></span> AI service latency elevated <span class="notif-time">3h</span></div>
+          </div>
+        </div>
+
+        <button class="icon-btn" id="settingsBtn" aria-label="Settings" onclick="window.location.href='/admin/settings'">⚙️</button>
+
+        <div class="admin-profile" id="adminProfileMenu">
+          <button class="profile-trigger" id="profileTrigger" aria-haspopup="true" aria-expanded="false">
+            <span class="profile-avatar" id="profileAvatarInitial">{{ first_name[0].upper() }}</span>
+            <span class="profile-meta">
+              <span class="profile-name" id="adminNameLabel">{{ admin.full_name }}</span>
+              <span class="role-badge">Manager</span>
+            </span>
+          </button>
+          <div class="profile-dropdown" role="menu">
+            <a href="/admin/settings" role="menuitem">Settings</a>
+            <button class="logout-item" id="logoutBtn" role="menuitem">Log Out</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-main">
+
+      <!-- ============ HERO ============ -->
+      <section class="admin-hero">
+        <div class="admin-hero-text">
+          <p class="eyebrow" id="greetingWord">Good Morning</p>
+          <h1 class="greeting-name">Welcome back, <span id="adminFirstName">{{ first_name }}</span> {{ user.last_name if user else '' }}</h1>
+          <p class="greeting-sub">Monitor your retail performance with real-time analytics and AI-powered insights.</p>
+
+          <div class="hero-meta-row">
+            <span class="meta-pill"><strong id="currentDate">—</strong></span>
+            <span class="meta-pill"><strong id="currentTime">—</strong></span>
+            <span class="meta-pill" id="storeStatusPill">
+              <span class="status-dot"></span> <strong id="storeStatusText">Checking store…</strong>
+            </span>
+            <span class="meta-pill">DB last updated <strong id="lastDbUpdate">2 min ago</strong></span>
+          </div>
+        </div>
+
+        <div class="admin-hero-illustration" aria-hidden="true">
+          <div class="illustration-ring"></div>
+          <div class="illustration-bars">
+            <span style="--h:38%"></span>
+            <span style="--h:62%"></span>
+            <span style="--h:48%"></span>
+            <span style="--h:80%"></span>
+            <span style="--h:56%"></span>
+            <span style="--h:70%"></span>
+          </div>
+          <div class="illustration-pulse"></div>
+        </div>
+      </section>
+
+      <!-- ============ EXECUTIVE SUMMARY (KPIs) ============ -->
+      <section class="page-section kpi-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Executive summary</p>
+            <h2 class="section-title" style="margin:0; text-align: left;">Today, at a glance.</h2>
+          </div>
+        </div>
+
+        <div class="kpi-grid" id="kpiGrid">
+          <div class="kpi-card" data-icon="revenue">
+            <div class="kpi-card-top">
+              <div class="kpi-card-icon"></div>
+              <span class="kpi-trend trend-up" id="kpiRevenueTrend">▲ +8.4%</span>
+            </div>
+            <span class="kpi-value" id="kpiRevenue">125,480 EGP</span>
+            <span class="kpi-label">Today's Revenue</span>
+            <span class="kpi-sub">vs. yesterday</span>
+          </div>
+
+          <div class="kpi-card" data-icon="orders">
+            <div class="kpi-card-top">
+              <div class="kpi-card-icon"></div>
+              <span class="kpi-trend trend-up" id="kpiOrdersTrend">▲ +4.1%</span>
+            </div>
+            <span class="kpi-value" id="kpiOrders">486</span>
+            <span class="kpi-label">Today's Orders</span>
+            <span class="kpi-sub">vs. yesterday</span>
+          </div>
+
+          <div class="kpi-card" data-icon="customers">
+            <div class="kpi-card-top">
+              <div class="kpi-card-icon"></div>
+              <span class="kpi-trend trend-up" id="kpiCustomersTrend">▲ +2.6%</span>
+            </div>
+            <span class="kpi-value" id="kpiCustomers">352</span>
+            <span class="kpi-label">Active Customers</span>
+            <span class="kpi-sub">currently shopping</span>
+          </div>
+
+          <div class="kpi-card" data-icon="products">
+            <div class="kpi-card-top">
+              <div class="kpi-card-icon"></div>
+              <span class="kpi-trend trend-down" id="kpiProductsTrend">▼ -1.2%</span>
+            </div>
+            <span class="kpi-value" id="kpiProductsSold">2,145</span>
+            <span class="kpi-label">Products Sold Today</span>
+            <span class="kpi-sub">vs. yesterday</span>
+          </div>
+
+          <div class="kpi-card" data-icon="inventory">
+            <div class="kpi-card-top">
+              <div class="kpi-card-icon"></div>
+              <span class="kpi-pill-status status-good">Healthy</span>
+            </div>
+            <span class="kpi-value" id="kpiInventoryHealth">92%</span>
+            <span class="kpi-label">Inventory Health</span>
+            <div class="kpi-progress"><span style="width:92%"></span></div>
+          </div>
+
+          <div class="kpi-card" data-icon="occupancy">
+            <div class="kpi-card-top">
+              <div class="kpi-card-icon"></div>
+              <span class="kpi-pill-status status-good">Occupied</span>
+            </div>
+            <span class="kpi-value" id="kpiShelfOccupancy">96%</span>
+            <span class="kpi-label">Shelf Occupancy</span>
+            <div class="kpi-progress"><span style="width:96%"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SALES PERFORMANCE ============ -->
+      <section class="page-section chart-section">
+        <div class="chart-card chart-card-lg">
+          <div class="chart-card-head">
+            <div>
+              <p class="section-eyebrow">Performance over time</p>
+              <h2 class="section-title" style="margin:0; text-align:left;">Sales performance.</h2>
+            </div>
+            <div class="chart-tabs" id="salesRangeTabs">
+              <button class="chart-tab is-active" data-range="today">Today</button>
+              <button class="chart-tab" data-range="7d">Last 7 Days</button>
+              <button class="chart-tab" data-range="month">Last Month</button>
+              <button class="chart-tab" data-range="year">Last Year</button>
+            </div>
+          </div>
+          <div class="chart-legend-row">
+            <span class="legend-chip"><i style="background:var(--indigo-500)"></i>Revenue</span>
+            <span class="legend-chip"><i style="background:var(--teal-500, #2fb6a3)"></i>Orders</span>
+            <span class="legend-chip"><i style="background:var(--status-yellow)"></i>Profit</span>
+          </div>
+          <div class="chart-canvas-wrap chart-canvas-wrap-lg">
+            <canvas id="salesPerformanceChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PROFIT ANALYTICS ============ -->
+      <section class="page-section chart-section">
+        <div class="chart-card chart-card-lg">
+          <div class="chart-card-head">
+            <div>
+              <p class="section-eyebrow">Margins</p>
+              <h2 class="section-title" style="margin:0; text-align:left;">Profit analytics.</h2>
+            </div>
+            <div class="profit-change-badges">
+              <span class="change-badge"><span class="change-label">Revenue</span><span class="change-value up">▲ 6.2%</span></span>
+              <span class="change-badge"><span class="change-label">Expenses</span><span class="change-value down">▼ 2.1%</span></span>
+              <span class="change-badge"><span class="change-label">Net Profit</span><span class="change-value up">▲ 11.8%</span></span>
+            </div>
+          </div>
+          <div class="chart-canvas-wrap chart-canvas-wrap-lg">
+            <canvas id="profitAnalyticsChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SALES BY CATEGORY ============ -->
+      <section class="page-section chart-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Category mix</p>
+            <h2 class="section-title" style="margin:0; text-align:left;">Sales by category.</h2>
+          </div>
+        </div>
+        <div class="split-panel">
+          <div class="chart-card">
+            <div class="chart-canvas-wrap">
+              <canvas id="categoryPieChart"></canvas>
+            </div>
+          </div>
+          <div class="category-legend-list" id="categoryLegendList">
+            <!-- populated by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ BEST SELLING PRODUCTS ============ -->
+      <section class="page-section table-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Top performers</p>
+            <h2 class="section-title" style="margin:0; text-align:left;">Best selling products.</h2>
+          </div>
+          <a href="/admin/inventory" class="section-link">View inventory →</a>
+        </div>
+        <div class="table-card">
+          <table class="data-table" id="bestSellersTable">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Units Sold</th>
+                <th>Revenue</th>
+                <th>Stock Remaining</th>
+              </tr>
+            </thead>
+            <tbody id="bestSellersBody">
+              <!-- populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ INVENTORY OVERVIEW ============ -->
+      <section class="page-section inventory-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Stock health</p>
+            <h2 class="section-title" style="margin:0; text-align:left;">Inventory overview.</h2>
+          </div>
+          <a href="/admin/inventory" class="section-link">Manage inventory →</a>
+        </div>
+
+        <div class="summary-cards-grid" id="inventoryOverviewGrid">
+          <div class="summary-card"><span class="summary-value" id="invTotal">1,284</span><span class="summary-label">Total Products</span></div>
+          <div class="summary-card"><span class="summary-value" id="invAvailable">1,142</span><span class="summary-label">Available Products</span></div>
+          <div class="summary-card"><span class="summary-value alert-text" id="invOutOfStock">18</span><span class="summary-label">Out of Stock</span></div>
+          <div class="summary-card"><span class="summary-value" id="invLowStock">37</span><span class="summary-label">Low Stock</span></div>
+          <div class="summary-card"><span class="summary-value" id="invNew">12</span><span class="summary-label">New Products</span></div>
+          <div class="summary-card"><span class="summary-value" id="invHidden">6</span><span class="summary-label">Hidden Products</span></div>
+        </div>
+
+        <div class="chart-card" style="margin-top:20px;">
+          <div class="chart-card-head">
+            <div>
+              <p class="section-eyebrow">By category</p>
+              <h3 class="section-title" style="margin:0; text-align:left; font-size:18px;">Inventory distribution.</h3>
+            </div>
+          </div>
+          <div class="chart-canvas-wrap">
+            <canvas id="inventoryDistributionChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ LOW STOCK ALERTS ============ -->
+      <section class="page-section low-stock-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Needs restocking</p>
+            <h2 class="section-title" style="margin:0; text-align:left;">Low stock alerts.</h2>
+          </div>
+        </div>
+        <div class="low-stock-grid" id="lowStockGrid">
+          <!-- populated by JS -->
+        </div>
+      </section>
+
+      <!-- ============ ACTIVE OFFERS ============ -->
+      <section class="page-section offers-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Promotions</p>
+            <h2 class="section-title" style="margin:0; text-align:left;">Active offers.</h2>
+          </div>
+          <a href="/admin/inventory" class="section-link">Manage offers →</a>
+        </div>
+        <div class="offers-grid" id="offersGrid">
+          <!-- populated by JS -->
+        </div>
+      </section>
+
+      <!-- ============ SHELF MONITORING SUMMARY ============ -->
+      <section class="page-section shelf-summary-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Computer vision</p>
+            <h2 class="section-title" style="margin:0; text-align:left;">Shelf monitoring summary.</h2>
+          </div>
+          <a href="/admin/shelf-monitoring" class="section-link">Open shelf monitoring →</a>
+        </div>
+        <div class="status-cards-grid shelf-summary-grid">
+          <div class="status-card">
+            <div class="status-card-icon" data-icon="store"></div>
+            <span class="status-card-value">54</span>
+            <span class="status-card-label">Shelves Scanned Today</span>
+          </div>
+          <div class="status-card">
+            <div class="status-card-icon" data-icon="offers"></div>
+            <span class="status-card-value">12,340</span>
+            <span class="status-card-label">Products Detected</span>
+          </div>
+          <div class="status-card">
+            <div class="status-card-icon" data-icon="lowstock"></div>
+            <span class="status-card-value">63</span>
+            <span class="status-card-label">Empty Shelf Spaces</span>
+          </div>
+          <div class="status-card">
+            <div class="status-card-icon" data-icon="health"></div>
+            <span class="status-card-value">94%</span>
+            <span class="status-card-label">Shelf Occupancy</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CUSTOMER ANALYTICS ============ -->
+      <section class="page-section customer-analytics-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Shopper behavior</p>
+            <h2 class="section-title" style="margin:0; text-align:left;">Customer analytics.</h2>
+          </div>
+          <a href="/admin/insights" class="section-link">Open customer insights →</a>
+        </div>
+
+        <div class="split-panel">
+          <div class="summary-cards-grid customer-summary-grid">
+            <div class="summary-card"><span class="summary-value">4,920</span><span class="summary-label">Total Registered Customers</span></div>
+            <div class="summary-card"><span class="summary-value">2,610</span><span class="summary-label">Returning Customers</span></div>
+            <div class="summary-card"><span class="summary-value">318</span><span class="summary-label">New Customers</span></div>
+            <div class="summary-card"><span class="summary-value">EGP 258</span><span class="summary-label">Average Basket Size</span></div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-card-head">
+              <div>
+                <p class="section-eyebrow">Segments</p>
+                <h3 class="section-title" style="margin:0; text-align:left; font-size:16px;">Customer segments.</h3>
+              </div>
+            </div>
+            <div class="chart-canvas-wrap chart-canvas-wrap-donut">
+              <canvas id="customerSegmentsChart"></canvas>
+            </div>
+            <div class="category-legend-list" id="segmentsLegendList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ AI BUSINESS INSIGHTS ============ -->
+      <section class="page-section insights-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Generated by RetailIQ AI</p>
+            <h2 class="section-title" style="margin:0; text-align:left;">AI business insights.</h2>
+          </div>
+        </div>
+        <div class="insights-grid" id="insightsGrid">
+          <!-- populated by JS -->
+        </div>
+      </section>
+
+      <!-- ============ FORECAST SUMMARY ============ -->
+      <section class="page-section forecast-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Predictive analytics</p>
+            <h2 class="section-title" style="margin:0; text-align:left;">Forecast summary.</h2>
+          </div>
+          <a href="/admin/forecasting" class="section-link">Open forecasting →</a>
+        </div>
+
+        <div class="forecast-grid">
+          <div class="chart-card forecast-chart-card">
+            <div class="chart-card-head">
+              <div>
+                <p class="forecast-card-label">Sales Forecast</p>
+                <h3 class="section-title" style="margin:0; text-align:left; font-size:16px;">Next 14 days.</h3>
+              </div>
+              <div class="forecast-pill">
+                <span>Tomorrow</span>
+                <strong id="forecastTomorrowValue">145,000 EGP</strong>
+              </div>
+            </div>
+            <div class="chart-canvas-wrap">
+              <canvas id="salesForecastChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card forecast-chart-card">
+            <div class="chart-card-head">
+              <div>
+                <p class="forecast-card-label">Demand Forecast</p>
+                <h3 class="section-title" style="margin:0; text-align:left; font-size:16px;">By category, next 7 days.</h3>
+              </div>
+              <div class="forecast-pill">
+                <span>Milk</span>
+                <strong class="trend-up">+18%</strong>
+              </div>
+            </div>
+            <div class="chart-canvas-wrap">
+              <canvas id="demandForecastChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="forecast-cards-row">
+          <div class="forecast-mini-card">
+            <span class="forecast-mini-label">Profit Prediction</span>
+            <span class="forecast-mini-value">52,000 EGP</span>
+            <span class="forecast-mini-sub">Expected profit, tomorrow</span>
+          </div>
+          <div class="forecast-mini-card">
+            <span class="forecast-mini-label">Inventory Recommendation</span>
+            <div class="restock-chips">
+              <span class="restock-chip">Restock Rice</span>
+              <span class="restock-chip">Restock Sugar</span>
+              <span class="restock-chip">Restock Milk</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ RECENT ORDERS ============ -->
+      <section class="page-section table-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Latest transactions</p>
+            <h2 class="section-title" style="margin:0; text-align:left;">Recent orders.</h2>
+          </div>
+        </div>
+        <div class="table-card">
+          <table class="data-table" id="recentOrdersTable">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Products</th>
+                <th>Total Price</th>
+                <th>Payment Method</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="recentOrdersBody">
+              <!-- populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ SYSTEM HEALTH ============ -->
+      <section class="page-section system-health-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Ecosystem health</p>
+            <h2 class="section-title" style="margin:0; text-align: left;">Is everything running well?</h2>
+          </div>
+        </div>
+        <div class="health-grid" id="systemHealthGrid">
+          <!-- populated by JS -->
+        </div>
+      </section>
+
+      <!-- ============ RECENT ADMINISTRATIVE ACTIVITY ============ -->
+      <section class="page-section activity-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Audit trail</p>
+            <h2 class="section-title" style="margin:0;">Recent administrative activity.</h2>
+          </div>
+        </div>
+        <div class="activity-timeline" id="activityTimeline">
+          <!-- populated by JS -->
+        </div>
+      </section>
+
+      <!-- ============ QUICK ACTIONS ============ -->
+      <section class="page-section quick-actions-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Do things faster</p>
+            <h2 class="section-title" style="margin:0; text-align:left;">Quick actions.</h2>
+          </div>
+        </div>
+        <div class="quick-actions-grid">
+          <a href="/admin/inventory" class="quick-action-btn">
+            <span class="quick-action-icon">📦</span> Manage Inventory
+          </a>
+          <a href="/admin/shelf-monitoring" class="quick-action-btn">
+            <span class="quick-action-icon">📷</span> Upload Shelf Image
+          </a>
+          <a href="/admin/reports" class="quick-action-btn">
+            <span class="quick-action-icon">📄</span> Generate Business Report
+          </a>
+          <a href="/admin/forecasting" class="quick-action-btn">
+            <span class="quick-action-icon">📈</span> Run AI Forecast
+          </a>
+          <a href="/admin/inventory?action=add" class="quick-action-btn">
+            <span class="quick-action-icon">➕</span> Add Product
+          </a>
+          <a href="/admin/inventory?action=offer" class="quick-action-btn">
+            <span class="quick-action-icon">🏷️</span> Create Offer
+          </a>
+        </div>
+      </section>
+
+      <!-- ============ BUSINESS PERFORMANCE SCORE ============ -->
+      <section class="page-section performance-score-section">
+        <div class="performance-score-panel">
+          <div class="score-ring-wrap">
+            <svg viewBox="0 0 120 120" class="score-ring">
+              <circle cx="60" cy="60" r="52" class="score-ring-bg"></circle>
+              <circle cx="60" cy="60" r="52" class="score-ring-fg" id="scoreRingFg"></circle>
+            </svg>
+            <div class="score-ring-label">
+              <span class="score-value" id="performanceScoreValue">92</span>
+              <span class="score-max">/ 100</span>
+            </div>
+          </div>
+          <div class="performance-score-text">
+            <p class="score-eyebrow">AI-generated score</p>
+            <h2 class="score-title">Retail Performance</h2>
+            <p class="score-explanation" id="scoreExplanation">
+              Excellent inventory health with strong customer engagement. Focus on replenishing dairy products and extending current beverage promotions.
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="site-footer admin-footer dashboard-footer">
+      <div class="footer-inner dashboard-footer-inner">
+        <div class="brand brand-footer">
+          <img src="/static/images/logo.png" alt="RetailIQ logo" class="brand-mark brand-mark-sm">
+          <span class="brand-name brand-name-sm">Retail<span class="accent">IQ</span></span>
+        </div>
+        <div class="footer-meta">
+          <span>System v2.4.1</span>
+          <span>DB Schema v1.9</span>
+          <span>Last sync: <strong id="footerLastSync">2 min ago</strong></span>
+          <a href="/admin/support">Support</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="/static/js/admin-main.js"></script>
+<script src="/static/js/admin-dashboard.js"></script>
+</body>
+</html>

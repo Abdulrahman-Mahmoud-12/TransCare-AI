@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RetailIQ — AI Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/home.css">
+  <link rel="stylesheet" href="/static/css/customer-main.css">
+  <link rel="stylesheet" href="/static/css/customer-assistant.css">
+</head>
+<body>
+
+<!-- background circuit / pulse layer -->
+<div class="bg-field" aria-hidden="true">
+  <svg class="pulse-line" viewBox="0 0 1600 400" preserveAspectRatio="none">
+    <path class="pulse-path" d="M0,200 L120,200 L150,120 L190,280 L230,60 L270,200 L420,200 L450,160 L480,200 L620,200 L650,90 L690,310 L730,200 L900,200 L930,150 L965,200 L1120,200 L1150,110 L1190,290 L1230,200 L1600,200"/>
+  </svg>
+</div>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <div class="brand">
+      <img src="/static/images/logo.png" alt="RetailIQ logo" class="brand-mark">
+      <div class="brand-text">
+        <span class="brand-name">Retail<span class="accent">IQ</span></span>
+        <span class="brand-line">Smart Retail Mentoring Eco-System</span>
+      </div>
+    </div>
+    <nav class="site-nav customer-nav">
+      <a href="/customer/main">Home</a>
+      <a href="/customer/dashboard">Dashboard</a>
+      <a href="/customer/assistant" class="is-active">AI Assistant</a>
+      <div class="user-menu" id="userMenu">
+        <button class="user-menu-trigger" id="userMenuTrigger" aria-haspopup="true" aria-expanded="false">
+          <span class="user-avatar" id="userAvatarInitial">{{ first_name[0].upper() }}</span>
+          <span class="user-name" id="userNameLabel">{{ user.full_name }}</span>
+        </button>
+        <div class="user-dropdown" role="menu">
+          <a href="/customer/profile" role="menuitem">My Profile</a>
+          <a href="/customer/purchases" role="menuitem">My Purchases</a>
+          <button class="logout-item" id="logoutBtn" role="menuitem">Log Out</button>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ============ ASSISTANT HERO / PAGE HEADER ============ -->
+  <section class="assistant-hero wrap">
+    <div class="assistant-hero-row">
+      <div class="assistant-title-block">
+        <p class="eyebrow">AI Shopping Assistant</p>
+        <h1 class="assistant-title">RetailIQ AI Assistant</h1>
+        <p class="assistant-subtitle">Ask about products, prices, offers, recommendations, and general store information — anytime.</p>
+      </div>
+      <span class="ai-status-pill" id="aiStatusPill">
+        <span class="status-dot"></span> <span id="aiStatusText">Online</span>
+      </span>
+    </div>
+  </section>
+
+  <!-- ============ ASSISTANT LAYOUT: CHAT + SIDEBAR ============ -->
+  <section class="assistant-layout wrap">
+
+    <!-- ----------- CHAT PANEL ----------- -->
+    <div class="chat-panel" id="chatPanel">
+
+      <div class="chat-messages" id="chatMessages">
+        <!-- Placeholder conversation is rendered here by customer-assistant.js -->
+      </div>
+
+      <!-- Empty state (shown by JS when there are no messages) -->
+      <div class="chat-empty-state" id="chatEmptyState" style="display:none;">
+        <div class="chat-empty-emoji">🤖</div>
+        <h3>Welcome to RetailIQ AI Assistant</h3>
+        <p>Ask about products, prices, offers, recommendations, or anything related to the retail store.</p>
+        <div class="chat-suggestions" id="emptyStateSuggestions"></div>
+      </div>
+
+      <!-- Suggested questions row -->
+      <div class="chat-suggestions" id="chatSuggestions"></div>
+
+      <!-- Chat input bar -->
+      <div class="chat-input-bar">
+        <button class="chat-icon-btn" id="clearChatBtn" aria-label="Clear conversation" title="Clear conversation">🗑️</button>
+        <textarea
+          class="chat-input-field"
+          id="chatInput"
+          rows="1"
+          placeholder="Ask about products, prices, offers…"
+          aria-label="Message the AI Assistant"></textarea>
+        <button class="chat-icon-btn" id="micBtn" aria-label="Voice input (placeholder)" title="Voice input">🎤</button>
+        <button class="chat-send-btn" id="sendBtn" aria-label="Send message" title="Send">➤</button>
+      </div>
+    </div>
+
+    <!-- ----------- SIDEBAR ----------- -->
+    <aside class="assistant-sidebar">
+
+      <!-- Quick Actions -->
+      <div class="sidebar-card">
+        <h3>Quick Actions</h3>
+        <div class="quick-actions-list">
+          <a class="quick-action-btn" href="#"><span class="qa-icon">🏷️</span> Browse Offers</a>
+          <a class="quick-action-btn" href="#"><span class="qa-icon">🔍</span> Search Products</a>
+          <a class="quick-action-btn" href="/customer/dashboard"><span class="qa-icon">📊</span> Open Dashboard</a>
+          <a class="quick-action-btn" href="/customer/purchases"><span class="qa-icon">🛒</span> View Purchases</a>
+        </div>
+      </div>
+
+      <!-- Recent Conversations -->
+      <div class="sidebar-card">
+        <h3>Recent Conversations</h3>
+        <div class="recent-convo-list" id="recentConvoList">
+          <!-- Populated by customer-assistant.js with placeholder data -->
+        </div>
+      </div>
+
+      <!-- AI Capabilities -->
+      <div class="sidebar-card">
+        <h3>What I can help with</h3>
+        <ul class="capabilities-list">
+          <li><span class="cap-check">✓</span> Product prices</li>
+          <li><span class="cap-check">✓</span> Current offers &amp; discounts</li>
+          <li><span class="cap-check">✓</span> Product availability</li>
+          <li><span class="cap-check">✓</span> Category information</li>
+          <li><span class="cap-check">✓</span> Personalized recommendations</li>
+          <li><span class="cap-check">✓</span> Store opening hours</li>
+          <li><span class="cap-check">✓</span> Alternative products</li>
+          <li><span class="cap-check">✓</span> Frequently bought together</li>
+        </ul>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="brand brand-footer">
+      <img src="/static/images/logo.png" alt="RetailIQ logo" class="brand-mark brand-mark-sm">
+      <span class="brand-name brand-name-sm">Retail<span class="accent">IQ</span></span>
+    </div>
+    <p class="footer-line">Smart Retail Mentoring Eco-System</p>
+  </div>
+</footer>
+
+<script src="/static/js/customer-main.js"></script>
+<script src="/static/js/customer-assistant.js"></script>
+</body>
+</html>

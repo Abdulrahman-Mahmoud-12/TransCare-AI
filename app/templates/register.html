@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account — RetailIQ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/home.css">
+  <link rel="stylesheet" href="/static/css/auth.css">
+</head>
+<body class="auth-body">
+
+<!-- background circuit / pulse layer -->
+<div class="bg-field" aria-hidden="true">
+  <svg class="pulse-line" viewBox="0 0 1600 400" preserveAspectRatio="none">
+    <path class="pulse-path" d="M0,200 L120,200 L150,120 L190,280 L230,60 L270,200 L420,200 L450,160 L480,200 L620,200 L650,90 L690,310 L730,200 L900,200 L930,150 L965,200 L1120,200 L1150,110 L1190,290 L1230,200 L1600,200"/>
+  </svg>
+</div>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a href="/" class="brand">
+      <img src="/static/images/logo.png" alt="RetailIQ logo" class="brand-mark">
+      <div class="brand-text">
+        <span class="brand-name">Retail<span class="accent">IQ</span></span>
+        <span class="brand-line">Smart Retail Mentoring Eco-System</span>
+      </div>
+    </a>
+    <nav class="site-nav">
+      <a href="/">Back to home</a>
+    </nav>
+  </div>
+</header>
+
+<main class="auth-main wrap">
+  <div class="auth-card">
+    <p class="role-eyebrow">Get started</p>
+    <h1 class="auth-title">Create your RetailIQ account</h1>
+    <p class="auth-sub">Tell us who you are, and we'll set up the right dashboard.</p>
+
+    <div class="auth-role-tabs" role="tablist" aria-label="Register as">
+      <button type="button" class="auth-role-tab is-active" data-role="customer" role="tab" aria-selected="true">
+        <span class="auth-role-icon" data-icon="customer"></span>
+        Customer
+      </button>
+      <button type="button" class="auth-role-tab" data-role="admin" role="tab" aria-selected="false">
+        <span class="auth-role-icon" data-icon="admin"></span>
+        Manager / Owner
+      </button>
+    </div>
+
+    <form id="registerForm" class="auth-form" novalidate>
+      <label class="auth-field">
+        <span class="auth-label">Full name</span>
+        <input type="text" name="fullName" id="registerName" placeholder="Jane Doe" autocomplete="name" required>
+      </label>
+
+      <label class="auth-field">
+        <span class="auth-label">Email address</span>
+        <input type="email" name="email" id="registerEmail" placeholder="you@example.com" autocomplete="email" required>
+      </label>
+
+      <div id="orgField" style="display: none;">
+        <label class="auth-field">
+          <span class="auth-label" id="orgLabel">Organization Name</span>
+          <input type="text" name="organization" id="registerOrg" placeholder="e.g., RetailIQ Global">
+        </label>
+      </div>
+
+      <div id="adminVerificationField" style="display: none;">
+        <label class="auth-field">
+          <span class="auth-label" style="color: var(--gold-500); font-weight: 600;">Admin Passcode Key</span>
+          <input type="text" name="admin_id" id="registerAdminId" placeholder="Enter secure admin_id token">
+        </label>
+      </div>
+
+      <label class="auth-field">
+        <span class="auth-label">Password</span>
+        <div class="auth-input-group">
+          <input type="password" name="password" id="registerPassword" placeholder="At least 8 characters" autocomplete="new-password" required minlength="8">
+          <button type="button" class="auth-toggle-visibility" id="togglePassword" aria-label="Show password">Show</button>
+        </div>
+      </label>
+
+      <label class="auth-field">
+        <span class="auth-label">Confirm password</span>
+        <input type="password" name="confirmPassword" id="registerConfirm" placeholder="Re-enter your password" autocomplete="new-password" required minlength="8">
+      </label>
+
+      <label class="auth-check auth-terms">
+        <input type="checkbox" name="terms" id="agreeTerms" required>
+        <span>I agree to the Terms of Service and Privacy Policy</span>
+      </label>
+
+      <button type="submit" class="btn btn-primary auth-submit" id="registerSubmit">
+        <span class="auth-submit-label">Create account</span>
+      </button>
+
+      <div class="role-status" id="registerStatus" aria-live="polite"></div>
+    </form>
+
+    <p class="auth-switch">Already have an account? <a href="/auth/login">Sign in</a></p>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="brand brand-footer">
+      <img src="/static/images/logo.png" alt="RetailIQ logo" class="brand-mark brand-mark-sm">
+      <span class="brand-name brand-name-sm">Retail<span class="accent">IQ</span></span>
+    </div>
+    <p class="footer-line">Smart Retail Mentoring Eco-System</p>
+  </div>
+</footer>
+
+<script src="/static/js/register.js?v=999"></script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!--
+  This file only shows the sections that changed from the original
+  shelf_monitoring.html. Merge these blocks into your existing template
+  at the matching section (identified by the surrounding comments/ids) —
+  everything outside these blocks (sidebar, topbar, upload section, KPI
+  grid, detection table, doughnut chart) is unchanged.
+-->
+
+<!-- ============ CHARTS: DISTRIBUTION + OCCUPANCY ============ -->
+<!-- Replaces the hardcoded 6 <div class="bar-item"> blocks -->
+<section class="page-section charts-section">
+  <div class="charts-grid">
+
+    <div class="chart-panel">
+      <div class="chart-panel-head">
+        <p class="section-eyebrow">Per category</p>
+        <h3 class="chart-panel-title">Product distribution</h3>
+      </div>
+      <div class="bar-chart" id="barChart">
+        <div class="bar-chart-bars" id="barChartBars">
+          <!-- populated dynamically by shelf-monitoring.js from
+               full_category_distribution (all store categories,
+               0-filled if not detected in this image) -->
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-panel">
+      <div class="chart-panel-head">
+        <p class="section-eyebrow">Occupancy</p>
+        <h3 class="chart-panel-title">Shelf occupancy</h3>
+      </div>
+      <div class="doughnut-wrap">
+        <div class="doughnut-chart" id="doughnutChart" style="--pct:0">
+          <div class="doughnut-center">
+            <span class="doughnut-pct" id="doughnutPct">0%</span>
+            <span class="doughnut-sub">Occupied</span>
+          </div>
+        </div>
+        <div class="doughnut-legend">
+          <div class="legend-row"><span class="legend-dot" style="background:var(--indigo-600)"></span> Occupied <strong id="legendOccupiedPct">0%</strong></div>
+          <div class="legend-row"><span class="legend-dot" style="background:var(--bg-alt); border:1px solid var(--border)"></span> Empty <strong id="legendEmptyPct">0%</strong></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ DETECTION STATISTICS ============ -->
+<!-- Replaces the 5 hardcoded <span class="stat-value"> values -->
+<section class="page-section stats-section">
+  <div class="section-head">
+    <div>
+      <p class="section-eyebrow">Statistics</p>
+      <h2 class="section-title" style="margin:0; text-align:left;">Detection statistics.</h2>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-label">Most Detected Category</span>
+      <span class="stat-value" id="statMostDetected">—</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Least Detected Category</span>
+      <span class="stat-value" id="statLeastDetected">—</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Empty Sections</span>
+      <span class="stat-value" id="statEmptySections">—</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Total Shelf Capacity</span>
+      <span class="stat-value" id="statTotalCapacity">—</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Detection Processing Time</span>
+      <span class="stat-value" id="statProcessingTime">—</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AI INSIGHTS ============ -->
+<!-- Replaces the 5 hardcoded <div class="insight-card"> blocks -->
+<section class="page-section insights-section">
+  <div class="section-head">
+    <div>
+      <p class="section-eyebrow">AI generated</p>
+      <h2 class="section-title" style="margin:0; text-align:left;">Insights &amp; recommendations.</h2>
+    </div>
+  </div>
+
+  <div class="insight-cards-grid" id="insightsGrid">
+    <!-- populated dynamically by shelf-monitoring.js from the
+         analysis response's `insights` array -->
+  </div>
+</section>
+
+<!-- ============ RECENT ANALYSES ============ -->
+<!-- Replaces the 5 hardcoded <tr> rows with a real Jinja loop over
+     `recent_analyses` (passed in from app/routers/admin.py) -->
+<section class="page-section recent-analyses-section">
+  <div class="section-head">
+    <div>
+      <p class="section-eyebrow">History</p>
+      <h2 class="section-title" style="margin:0; text-align:left;">Recent analyses.</h2>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <table class="recent-table">
+      <thead>
+        <tr>
+          <th>Analysis ID</th>
+          <th>Date</th>
+          <th>Uploaded By</th>
+          <th>Products Detected</th>
+          <th>Empty Spaces</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="recentAnalysesBody">
+        {% for a in recent_analyses %}
+        <tr>
+          <td>{{ a.analysis_id }}</td>
+          <td>{{ a.date }}</td>
+          <td>{{ a.uploaded_by }}</td>
+          <td>{{ a.total_products if a.total_products is not none else "—" }}</td>
+          <td>{{ a.empty_spaces if a.empty_spaces is not none else "—" }}</td>
+          <td>
+            {% if a.status == "completed" %}
+              <span class="status-pill status-ready">Completed</span>
+            {% elif a.status == "failed" %}
+              <span class="status-pill status-failed">Failed</span>
+            {% else %}
+              <span class="status-pill status-pending">Processing</span>
+            {% endif %}
+          </td>
+          <td>
+            <button class="view-result-btn" data-analysis-id="{{ a.analysis_id }}" {% if a.status != "completed" %}disabled{% endif %}>View Result</button>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="7" style="text-align:center; color: var(--text-muted);">
+            No analyses yet — upload a shelf image to get started.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>

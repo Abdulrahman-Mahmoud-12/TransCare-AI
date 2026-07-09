@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RetailIQ — Business Reports</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/home.css">
+  <link rel="stylesheet" href="/static/css/admin-main.css">
+  <link rel="stylesheet" href="/static/css/admin-reports.css">
+</head>
+<body class="admin-body">
+
+<div class="admin-shell">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-brand">
+      <img src="/static/images/logo.png" alt="RetailIQ logo" class="brand-mark brand-mark-sm">
+      <div class="brand-text">
+        <span class="brand-name brand-name-sm">Retail<span class="accent">IQ</span></span>
+        <span class="brand-line">Admin Console</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="/admin/main" class="sidebar-link" data-icon="overview">
+        <span class="sidebar-icon"></span> Overview
+      </a>
+      <a href="/admin/dashboard" class="sidebar-link" data-icon="dashboard">
+        <span class="sidebar-icon"></span> Dashboard
+      </a>
+      <a href="/admin/shelf-monitoring" class="sidebar-link" data-icon="shelf">
+        <span class="sidebar-icon"></span> Shelf Monitoring
+      </a>
+      <a href="/admin/reports" class="sidebar-link is-active" data-icon="reports">
+        <span class="sidebar-icon"></span> Business Reports
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="/admin/settings" class="sidebar-link" data-icon="settings">
+        <span class="sidebar-icon"></span> Settings
+      </a>
+      <button class="sidebar-link sidebar-logout" id="sidebarLogoutBtn" data-icon="logout">
+        <span class="sidebar-icon"></span> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- ============ CONTENT ============ -->
+  <div class="admin-content">
+
+    <!-- ============ TOPBAR ============ -->
+    <header class="admin-topbar">
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+
+      <div class="topbar-search">
+        <span class="search-icon" aria-hidden="true"></span>
+        <input type="text" placeholder="Search products, orders, reports…" id="globalSearchInput">
+      </div>
+
+      <div class="topbar-actions">
+        <div class="icon-menu" id="notifMenu">
+          <button class="icon-btn" id="notifBtn" aria-haspopup="true" aria-expanded="false" aria-label="Notifications">
+            🔔<span class="badge-dot" id="notifBadge">3</span>
+          </button>
+          <div class="icon-dropdown" role="menu">
+            <p class="icon-dropdown-title">Notifications</p>
+            <div class="notif-item"><span class="notif-dot dot-yellow"></span> Low stock: Whole Milk 1L <span class="notif-time">12m</span></div>
+            <div class="notif-item"><span class="notif-dot dot-red"></span> Empty shelf detected — Aisle 3 <span class="notif-time">40m</span></div>
+            <div class="notif-item"><span class="notif-dot dot-green"></span> Weekly report generated <span class="notif-time">2h</span></div>
+          </div>
+        </div>
+
+        <div class="icon-menu" id="alertsMenu">
+          <button class="icon-btn" id="alertsBtn" aria-haspopup="true" aria-expanded="false" aria-label="System alerts">
+            ⚠️<span class="badge-dot is-alert" id="alertsBadge">2</span>
+          </button>
+          <div class="icon-dropdown" role="menu">
+            <p class="icon-dropdown-title">System Alerts</p>
+            <div class="notif-item"><span class="notif-dot dot-red"></span> Forecasting engine job failed <span class="notif-time">1h</span></div>
+            <div class="notif-item"><span class="notif-dot dot-yellow"></span> AI service latency elevated <span class="notif-time">3h</span></div>
+          </div>
+        </div>
+
+        <button class="icon-btn" id="settingsBtn" aria-label="Settings" onclick="window.location.href='/admin/settings'">⚙️</button>
+
+        <div class="admin-profile" id="adminProfileMenu">
+          <button class="profile-trigger" id="profileTrigger" aria-haspopup="true" aria-expanded="false">
+            <span class="profile-avatar" id="profileAvatarInitial">{{ first_name[0].upper() }}</span>
+            <span class="profile-meta">
+              <span class="profile-name" id="adminNameLabel">{{ user.full_name }}</span>
+              <span class="role-badge">Manager</span>
+            </span>
+          </button>
+          <div class="profile-dropdown" role="menu">
+            <a href="/admin/settings" role="menuitem">Settings</a>
+            <button class="logout-item" id="logoutBtn" role="menuitem">Log Out</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-main">
+
+      <!-- ============ PAGE HEADER ============ -->
+      <section class="page-section reports-header-section">
+        <div class="reports-header">
+          <div class="reports-header-text">
+            <p class="eyebrow" style="text-align:left; margin:0 0 10px; color:var(--indigo-600);">Reports &amp; Insights</p>
+            <h1 class="reports-header-title">Business Reports</h1>
+            <p class="reports-header-sub">Generate AI-powered business reports, review performance summaries, and share insights with your team — all in one place.</p>
+
+            <div class="hero-meta-row" style="margin-bottom:0;">
+              <span class="meta-pill">Last generated: <strong id="lastReportPill">Weekly Inventory Report · Jul 6, 2026</strong></span>
+              <span class="meta-pill"><span class="status-dot"></span> <strong>2</strong> pending in queue</span>
+            </div>
+          </div>
+
+          <div class="reports-header-illustration" aria-hidden="true">
+            <div class="illustration-ring"></div>
+            <span class="reports-header-emoji">📄</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ GENERATE REPORT ============ -->
+      <section class="page-section generate-report-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Create new</p>
+            <h2 class="section-title" style="margin:0; text-align:left;">Generate a report.</h2>
+          </div>
+        </div>
+
+        <form class="report-form-panel" id="generateReportForm">
+          <div class="form-field">
+            <label for="reportType">Report Type</label>
+            <select id="reportType" name="report_type" required>
+              <option value="" disabled selected>Select report type</option>
+              <option value="daily_sales">Daily Sales Report</option>
+              <option value="weekly_inventory">Weekly Inventory Report</option>
+              <option value="monthly_summary">Monthly Business Summary</option>
+              <option value="customer_insights">Customer Insights Report</option>
+              <option value="demand_forecast">Demand Forecast Report</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="dateRangePreset">Date Range</label>
+            <select id="dateRangePreset" name="date_range_preset">
+              <option value="today">Today</option>
+              <option value="this_week" selected>This Week</option>
+              <option value="this_month">This Month</option>
+              <option value="last_30_days">Last 30 Days</option>
+              <option value="custom">Custom Range</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="dateFrom">From</label>
+            <input type="date" id="dateFrom" name="date_from">
+          </div>
+
+          <div class="form-field">
+            <label for="dateTo">To</label>
+            <input type="date" id="dateTo" name="date_to">
+          </div>
+
+          <div class="form-field">
+            <label for="reportFormat">Report Format</label>
+            <select id="reportFormat" name="report_format">
+              <option value="pdf" selected>PDF</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="adminEmail">Administrator Email</label>
+            <input type="email" id="adminEmail" name="admin_email" placeholder="admin@retailiq.com" value="{{ user.email if user else '' }}">
+          </div>
+
+          <div class="report-form-actions">
+            <button type="submit" class="btn btn-primary" id="generateReportBtn">Generate Report</button>
+            <button type="reset" class="btn btn-ghost">Reset</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- ============ BUSINESS SUMMARY ============ -->
+      <section class="page-section business-summary-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">At a glance</p>
+            <h2 class="section-title" style="margin:0; text-align:left;">Business summary.</h2>
+          </div>
+        </div>
+
+        <div class="summary-cards-grid">
+          <div class="summary-card"><span class="summary-value">EGP 128,450</span><span class="summary-label">Total Revenue</span></div>
+          <div class="summary-card"><span class="summary-value">1,284</span><span class="summary-label">Total Orders</span></div>
+          <div class="summary-card"><span class="summary-value">EGP 42,300</span><span class="summary-label">Net Profit</span></div>
+          <div class="summary-card"><span class="summary-value">Dairy</span><span class="summary-label">Best Selling Category</span></div>
+          <div class="summary-card"><span class="summary-value">96%</span><span class="summary-label">Inventory Health</span></div>
+          <div class="summary-card"><span class="summary-value">+12%</span><span class="summary-label">Customer Growth</span></div>
+        </div>
+      </section>
+
+      <!-- ============ AI INSIGHTS ============ -->
+      <section class="page-section ai-insights-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Powered by RetailIQ AI</p>
+            <h2 class="section-title" style="margin:0; text-align:left;">AI insights.</h2>
+          </div>
+          <a href="/admin/insights" class="section-link">View all insights →</a>
+        </div>
+
+        <div class="insights-grid" id="aiInsightsGrid">
+          <div class="insight-card">
+            <span class="insight-icon">🥛</span>
+            <p class="insight-text">Dairy products need restocking within the next 2 days.</p>
+            <span class="insight-tag tag-warning">Restock</span>
+          </div>
+          <div class="insight-card">
+            <span class="insight-icon">📈</span>
+            <p class="insight-text">Sales increased 14% this week compared to last week.</p>
+            <span class="insight-tag tag-positive">Growth</span>
+          </div>
+          <div class="insight-card">
+            <span class="insight-icon">🥤</span>
+            <p class="insight-text">Beverage offers performed well, driving a 9% uplift in category sales.</p>
+            <span class="insight-tag tag-positive">Offers</span>
+          </div>
+          <div class="insight-card">
+            <span class="insight-icon">👥</span>
+            <p class="insight-text">Customer retention improved by 6% following the loyalty promotion.</p>
+            <span class="insight-tag tag-positive">Retention</span>
+          </div>
+          <div class="insight-card">
+            <span class="insight-icon">📦</span>
+            <p class="insight-text">Snacks category shows slower turnover than forecasted this month.</p>
+            <span class="insight-tag tag-neutral">Watch</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ REPORT PREVIEW ============ -->
+      <section class="page-section report-preview-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Latest draft</p>
+            <h2 class="section-title" style="margin:0; text-align:left;">Report preview.</h2>
+          </div>
+        </div>
+
+        <div class="preview-card">
+          <div class="preview-card-head">
+            <div>
+              <span class="report-type" id="previewReportName">Weekly Inventory &amp; Sales Report</span>
+              <p class="preview-meta" id="previewReportMeta">Weekly Inventory Report · Generated Jul 6, 2026</p>
+            </div>
+            <span class="report-status status-ready">Ready</span>
+          </div>
+
+          <p class="preview-summary" id="previewSummaryText">
+            This week's inventory remained healthy at 96% availability, with Dairy leading sales performance.
+            Revenue grew 14% week-over-week, and two categories — Snacks and Beverages — are flagged for
+            restocking attention. Overall store performance trended positively across all monitored aisles.
+          </p>
+
+          <div class="preview-actions">
+            <button class="btn btn-ghost" id="previewReportBtn">Preview</button>
+            <button class="btn btn-primary" id="downloadPreviewBtn">Download PDF</button>
+            <button class="btn btn-ghost" id="emailPreviewBtn">Send by Email</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ REPORT HISTORY ============ -->
+      <section class="page-section report-history-section">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Archive</p>
+            <h2 class="section-title" style="margin:0; text-align:left;">Report history.</h2>
+          </div>
+        </div>
+
+        <div class="history-table-wrap">
+          <table class="history-table" id="reportHistoryTable">
+            <thead>
+              <tr>
+                <th>Report ID</th>
+                <th>Report Type</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono-cell">#RPT-1042</td>
+                <td>Daily Sales Report</td>
+                <td>Jul 7, 2026</td>
+                <td><span class="report-status status-ready">Ready</span></td>
+                <td class="history-actions">
+                  <button class="icon-action-btn" title="View">👁</button>
+                  <button class="icon-action-btn" title="Download">⬇</button>
+                  <button class="icon-action-btn is-danger" title="Delete">🗑</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="mono-cell">#RPT-1041</td>
+                <td>Weekly Inventory Report</td>
+                <td>Jul 6, 2026</td>
+                <td><span class="report-status status-ready">Ready</span></td>
+                <td class="history-actions">
+                  <button class="icon-action-btn" title="View">👁</button>
+                  <button class="icon-action-btn" title="Download">⬇</button>
+                  <button class="icon-action-btn is-danger" title="Delete">🗑</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="mono-cell">#RPT-1040</td>
+                <td>Customer Insights Report</td>
+                <td>Jul 5, 2026</td>
+                <td><span class="report-status status-pending">Pending</span></td>
+                <td class="history-actions">
+                  <button class="icon-action-btn" title="View" disabled>👁</button>
+                  <button class="icon-action-btn" title="Download" disabled>⬇</button>
+                  <button class="icon-action-btn is-danger" title="Delete">🗑</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="mono-cell">#RPT-1039</td>
+                <td>Demand Forecast Report</td>
+                <td>Jul 4, 2026</td>
+                <td><span class="report-status status-failed">Failed</span></td>
+                <td class="history-actions">
+                  <button class="icon-action-btn" title="View" disabled>👁</button>
+                  <button class="icon-action-btn" title="Download" disabled>⬇</button>
+                  <button class="icon-action-btn is-danger" title="Delete">🗑</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="mono-cell">#RPT-1038</td>
+                <td>Monthly Business Summary</td>
+                <td>Jun 30, 2026</td>
+                <td><span class="report-status status-ready">Ready</span></td>
+                <td class="history-actions">
+                  <button class="icon-action-btn" title="View">👁</button>
+                  <button class="icon-action-btn" title="Download">⬇</button>
+                  <button class="icon-action-btn is-danger" title="Delete">🗑</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ QUICK ACTIONS ============ -->
+      <section class="page-section cta-band" style="padding-top:10px;">
+        <div class="cta-band-inner">
+          <div>
+            <h2>Ready for another report?</h2>
+            <p>Generate a fresh report, grab the latest PDF, or jump back into your dashboard.</p>
+          </div>
+          <div class="hero-actions" style="margin:0;">
+            <a href="#generateReportForm" class="btn btn-primary" id="quickGenerateBtn">Generate New Report</a>
+            <a href="#" class="btn btn-ghost" style="background:transparent;border-color:rgba(255,255,255,0.3);color:#fff;" id="quickDownloadLatestBtn">Download Latest Report</a>
+            <a href="/admin/dashboard" class="btn btn-ghost" style="background:transparent;border-color:rgba(255,255,255,0.3);color:#fff;">Open Dashboard</a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="site-footer admin-footer">
+      <div class="footer-inner">
+        <div class="brand brand-footer">
+          <img src="/static/images/logo.png" alt="RetailIQ logo" class="brand-mark brand-mark-sm">
+          <span class="brand-name brand-name-sm">Retail<span class="accent">IQ</span></span>
+        </div>
+        <p class="footer-line">Smart Retail Mentoring Eco-System — Admin Console</p>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script src="/static/js/admin-main.js"></script>
+<script src="/static/js/admin-reports.js"></script>
+</body>
+</html>

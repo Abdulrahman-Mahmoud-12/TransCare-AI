@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RetailIQ — My Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/home.css">
+  <link rel="stylesheet" href="/static/css/customer-main.css">
+  <link rel="stylesheet" href="/static/css/customer-dashboard.css">
+</head>
+<body>
+
+<!-- background circuit / pulse layer -->
+<div class="bg-field" aria-hidden="true">
+  <svg class="pulse-line" viewBox="0 0 1600 400" preserveAspectRatio="none">
+    <path class="pulse-path" d="M0,200 L120,200 L150,120 L190,280 L230,60 L270,200 L420,200 L450,160 L480,200 L620,200 L650,90 L690,310 L730,200 L900,200 L930,150 L965,200 L1120,200 L1150,110 L1190,290 L1230,200 L1600,200"/>
+  </svg>
+</div>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <div class="brand">
+      <img src="/static/images/logo.png" alt="RetailIQ logo" class="brand-mark">
+      <div class="brand-text">
+        <span class="brand-name">Retail<span class="accent">IQ</span></span>
+        <span class="brand-line">Smart Retail Mentoring Eco-System</span>
+      </div>
+    </div>
+    <nav class="site-nav customer-nav">
+      <a href="/customer/main">Home</a>
+      <a href="/customer/dashboard" class="is-active">Dashboard</a>
+      <a href="/customer/assistant">AI Assistant</a>
+
+      <div class="user-menu" id="userMenu">
+        <button class="user-menu-trigger" id="userMenuTrigger" aria-haspopup="true" aria-expanded="false">
+          <span class="user-avatar" id="userAvatarInitial">{{ first_name[0].upper() }}</span>
+          <span class="user-name" id="userNameLabel">{{ user.full_name }}</span>
+        </button>
+        <div class="user-dropdown" role="menu">
+          <button class="logout-item" id="logoutBtn" role="menuitem">Log Out</button>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="dashboard-shell">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="dashboard-sidebar">
+      <p class="sidebar-label">Menu</p>
+      <a href="/customer/dashboard" class="sidebar-link is-active">
+        <span class="sidebar-icon"><i class="fa-solid fa-chart-line"></i></span> Dashboard
+      </a>
+      <a href="/customer/assistant" class="sidebar-link">
+        <span class="sidebar-icon"><i class="fa-solid fa-robot"></i></span> AI Assistant
+      </a>
+      <div class="sidebar-divider"></div>
+      <button class="sidebar-link logout-link" id="sidebarLogoutBtn">
+        <span class="sidebar-icon"><i class="fa-solid fa-right-from-bracket"></i></span> Log Out
+      </button>
+    </aside>
+
+    <!-- ============ CONTENT ============ -->
+    <div class="dashboard-content">
+
+      <!-- ============ HERO ============ -->
+      <section class="customer-hero dashboard-hero">
+        <div class="greeting-row">
+          <div class="greeting-avatar" id="heroAvatarInitial">{{ first_name[0].upper() }}</div>
+          <div class="greeting-text">
+            <p class="eyebrow" id="greetingWord">Good Morning</p>
+            <h1 class="greeting-name">Welcome Back, <span id="customerFirstName">{{ first_name }}</span> 👋</h1>
+            <p class="greeting-sub">Here's an overview of your shopping activity and personalized insights.</p>
+          </div>
+        </div>
+
+        <div class="hero-meta-row dashboard-meta">
+          <span class="meta-pill"><strong id="currentDate">—</strong></span>
+          <span class="meta-pill"><strong id="currentTime">—</strong></span>
+          <span class="meta-pill">Member since <strong id="memberSinceDate">{{ user.created_at.strftime('%b %Y') }}</strong></span>
+          <span class="meta-pill">Member Category <strong id="loyaltyLevelPill">{{ user.customer_category.value if user.customer_category else 'Regular' }}</strong></span>
+        </div>
+      </section>
+
+      <!-- ============ STATISTIC CARDS ============ -->
+      <section class="page-section stats-section wrap" style="padding-top:0;">
+        <div class="stats-grid">
+          <div class="stat-card" id="statTotalOrders">
+            <div class="stat-card-icon">🧾</div>
+            <p class="stat-card-value" id="statTotalOrdersValue">58 Orders</p>
+            <p class="stat-card-label">Total Orders</p>
+            <p class="stat-card-sub">Lifetime purchases</p>
+          </div>
+
+          <div class="stat-card" id="statTotalSpending">
+            <div class="stat-card-icon">💳</div>
+            <p class="stat-card-value" id="statTotalSpendingValue">8,540 EGP</p>
+            <p class="stat-card-label">Total Spending</p>
+            <p class="stat-card-sub">Total money spent</p>
+            <span class="stat-card-trend up" id="statSpendingTrend">+12%</span>
+          </div>
+
+          <div class="stat-card" id="statMoneySaved">
+            <div class="stat-card-icon">💰</div>
+            <p class="stat-card-value" id="statMoneySavedValue">1,230 EGP</p>
+            <p class="stat-card-label">Money Saved</p>
+            <p class="stat-card-sub">Saved from offers</p>
+          </div>
+
+          <div class="stat-card" id="statFavoriteCategory">
+            <div class="stat-card-icon">🥛</div>
+            <p class="stat-card-value" id="statFavoriteCategoryValue">Dairy</p>
+            <p class="stat-card-label">Favorite Category</p>
+            <p class="stat-card-sub" id="statFavoriteCategorySub">Purchased 142 times</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SPENDING ANALYTICS + DISTRIBUTION ============ -->
+      <section class="page-section analytics-section wrap">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Spending analytics</p>
+            <h2 class="section-title" style="margin:0;">Where your money's been going.</h2>
+          </div>
+        </div>
+
+        <div class="analytics-grid">
+          <div class="chart-panel" id="spendingAnalyticsPanel">
+            <div class="chart-panel-head">
+              <div>
+                <p class="chart-panel-title">Spending Over Time</p>
+                <p class="chart-panel-sub">Hover a point to see totals and purchase count</p>
+              </div>
+              <div class="period-toggle" id="periodToggle">
+                <button class="period-btn is-active" data-period="weekly">Weekly</button>
+                <button class="period-btn" data-period="monthly">Monthly</button>
+                <button class="period-btn" data-period="yearly">Yearly</button>
+              </div>
+            </div>
+            <div class="chart-canvas-wrap">
+              <canvas id="spendingChart"></canvas>
+            </div>
+            <div class="chart-legend-row">
+              <div class="chart-legend-item">
+                <span class="legend-dot" style="background:var(--teal-500,var(--teal-600));"></span>
+                Total spending: <strong id="spendingChartTotal">—</strong>
+              </div>
+              <div class="chart-legend-item">
+                Purchases in range: <strong id="spendingChartOrders">—</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="pie-panel" id="purchaseDistributionPanel">
+            <div class="chart-panel-head">
+              <div>
+                <p class="chart-panel-title">Purchase Distribution</p>
+                <p class="chart-panel-sub">Share of purchases by category</p>
+              </div>
+            </div>
+            <div class="chart-canvas-wrap">
+              <canvas id="distributionChart"></canvas>
+            </div>
+            <div class="pie-legend" id="pieLegend"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ FAVORITE PRODUCTS ============ -->
+      <section class="page-section fav-products-section wrap">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Bought again and again</p>
+            <h2 class="section-title" style="margin:0;">Your favorite products.</h2>
+          </div>
+        </div>
+
+        <div class="offers-rail-wrap">
+          <button class="rail-btn prev" id="favProductsPrev" aria-label="Scroll left">‹</button>
+          
+          <!-- Clear static cards; populated dynamically via JS -->
+          <div class="offers-rail" id="favProductsRail">
+            <p class="loading-text" style="padding: 20px; color: var(--text-muted);">Loading your favorites...</p>
+          </div>
+          
+          <button class="rail-btn next" id="favProductsNext" aria-label="Scroll right">›</button>
+        </div>
+      </section>
+
+      <!-- ============ PERSONALIZED RECOMMENDATIONS ============ -->
+      <section class="page-section recommend-section wrap">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Picked for you</p>
+            <h2 class="section-title" style="margin:0;">Personalized recommendations.</h2>
+          </div>
+        </div>
+
+        <div class="recommend-grid" id="recommendationsGrid">
+          <article class="recommend-card" data-id="rc1" data-product-name="Low-Fat Labneh 250g">
+            <div class="recommend-image">🥣</div>
+            <div class="recommend-body">
+              <span class="recommend-category">Dairy</span>
+              <h3 class="recommend-name">Low-Fat Labneh 250g</h3>
+              <span class="recommend-price">EGP 39</span>
+              <p class="recommend-reason">Recommended because you frequently buy dairy products.</p>
+            </div>
+            <div class="recommend-actions">
+              <button class="product-view-btn">View Details</button>
+              <button class="ask-ai-btn">Ask AI</button>
+            </div>
+          </article>
+
+          <article class="recommend-card" data-id="rc2" data-product-name="Sourdough Baguette">
+            <div class="recommend-image">🥖</div>
+            <div class="recommend-body">
+              <span class="recommend-category">Bakery</span>
+              <h3 class="recommend-name">Sourdough Baguette</h3>
+              <span class="recommend-price">EGP 31</span>
+              <p class="recommend-reason">Recommended because bakery pairs well with your dairy basket.</p>
+            </div>
+            <div class="recommend-actions">
+              <button class="product-view-btn">View Details</button>
+              <button class="ask-ai-btn">Ask AI</button>
+            </div>
+          </article>
+
+          <article class="recommend-card" data-id="rc3" data-product-name="Almond Milk 1L">
+            <div class="recommend-image">🥛</div>
+            <div class="recommend-body">
+              <span class="recommend-category">Dairy Alternatives</span>
+              <h3 class="recommend-name">Almond Milk 1L</h3>
+              <span class="recommend-price">EGP 89</span>
+              <p class="recommend-reason">Recommended as an alternative to your regular milk purchases.</p>
+            </div>
+            <div class="recommend-actions">
+              <button class="product-view-btn">View Details</button>
+              <button class="ask-ai-btn">Ask AI</button>
+            </div>
+          </article>
+
+          <article class="recommend-card" data-id="rc4" data-product-name="Mixed Berry Compote">
+            <div class="recommend-image">🍓</div>
+            <div class="recommend-body">
+              <span class="recommend-category">Frozen Food</span>
+              <h3 class="recommend-name">Mixed Berry Compote</h3>
+              <span class="recommend-price">EGP 56</span>
+              <p class="recommend-reason">Recommended because it pairs well with your yogurt purchases.</p>
+            </div>
+            <div class="recommend-actions">
+              <button class="product-view-btn">View Details</button>
+              <button class="ask-ai-btn">Ask AI</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ============ ACTIVE OFFERS ============ -->
+      <section class="page-section offers-section wrap">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Just for you</p>
+            <h2 class="section-title" style="margin:0;">Active offers.</h2>
+          </div>
+          <a href="#" class="section-link">See all offers →</a>
+        </div>
+
+        <div class="offers-rail-wrap">
+          <button class="rail-btn prev" id="offersPrev" aria-label="Scroll offers left">‹</button>
+          <div class="offers-rail" id="offersRail">
+
+            {% if offers %}
+              {% for offer in offers %}
+              <article class="offer-card" data-product="{{ offer.product_name }}">
+                <div class="offer-image">
+                  {% if offer.image_url and offer.image_url.startswith(('http', '/')) %}
+                    <img src="{{ offer.image_url }}" alt="{{ offer.product_name }}" style="width:40px; height:40px; object-fit:contain;">
+                  {% else %}
+                    {{ offer.image_url or '🏷️' }}
+                  {% endif %}
+                  <span class="offer-badge">-{{ offer.discount_percentage }}%</span>
+                </div>
+                <div class="offer-body">
+                  <h3 class="offer-name">{{ offer.product_name }}</h3>
+                  <div class="offer-price-row">
+                    <span class="price-original">EGP {{ offer.original_price }}</span>
+                    <span class="price-discounted">EGP {{ offer.discounted_price }}</span>
+                  </div>
+                  <span class="offer-timer live-countdown" data-expires="{{ offer.end_date_iso }}">Calculating...</span>
+                </div>
+                <div style="padding:0 16px 16px;">
+                  <button class="product-view-btn" style="width:100%;">View Offer</button>
+                </div>
+              </article>
+              {% endfor %}
+            {% else %}
+              <article class="offer-card" data-product="Greek Yogurt 500g">
+                <div class="offer-image">🍶<span class="offer-badge">-20%</span></div>
+                <div class="offer-body">
+                  <h3 class="offer-name">Greek Yogurt 500g</h3>
+                  <div class="offer-price-row">
+                    <span class="price-original">EGP 85</span>
+                    <span class="price-discounted">EGP 68</span>
+                  </div>
+                  <span class="offer-timer live-countdown" data-expires="2026-07-12T23:59:00">Calculating...</span>
+                </div>
+                <div style="padding:0 16px 16px;">
+                  <button class="product-view-btn" style="width:100%;">View Offer</button>
+                </div>
+              </article>
+              <article class="offer-card" data-product="Wholewheat Bread Loaf">
+                <div class="offer-image">🍞<span class="offer-badge">-15%</span></div>
+                <div class="offer-body">
+                  <h3 class="offer-name">Wholewheat Bread Loaf</h3>
+                  <div class="offer-price-row">
+                    <span class="price-original">EGP 26</span>
+                    <span class="price-discounted">EGP 22</span>
+                  </div>
+                  <span class="offer-timer live-countdown" data-expires="2026-07-09T23:59:00">Calculating...</span>
+                </div>
+                <div style="padding:0 16px 16px;">
+                  <button class="product-view-btn" style="width:100%;">View Offer</button>
+                </div>
+              </article>
+              <article class="offer-card" data-product="Sparkling Water 1.5L">
+                <div class="offer-image">🥤<span class="offer-badge">-10%</span></div>
+                <div class="offer-body">
+                  <h3 class="offer-name">Sparkling Water 1.5L</h3>
+                  <div class="offer-price-row">
+                    <span class="price-original">EGP 20</span>
+                    <span class="price-discounted">EGP 18</span>
+                  </div>
+                  <span class="offer-timer live-countdown" data-expires="2026-07-15T23:59:00">Calculating...</span>
+                </div>
+                <div style="padding:0 16px 16px;">
+                  <button class="product-view-btn" style="width:100%;">View Offer</button>
+                </div>
+              </article>
+            {% endif %}
+
+          </div>
+          <button class="rail-btn next" id="offersNext" aria-label="Scroll offers right">›</button>
+        </div>
+      </section>
+
+      <!-- ============ PURCHASE TIMELINE ============ -->
+      <section class="page-section purchases-section wrap">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Recent activity</p>
+            <h2 class="section-title" style="margin:0;">Purchase timeline.</h2>
+          </div>
+          <a href="/customer/purchases" class="section-link">View all purchases →</a>
+        </div>
+
+        <div class="purchase-timeline" id="purchaseTimeline">
+          <div class="purchase-item" data-order-id="245">
+            <div class="purchase-date-block">
+              <span class="purchase-date-day">06</span>
+              <span class="purchase-date-month">Jul</span>
+            </div>
+            <div class="purchase-info">
+              <p class="purchase-order-no">Order #245</p>
+              <span class="purchase-meta">7 products</span>
+            </div>
+            <span class="purchase-total">EGP 312</span>
+            <span class="purchase-status status-delivered">Delivered</span>
+            <button class="purchase-view-btn">View Order</button>
+          </div>
+
+          <div class="purchase-item" data-order-id="244">
+            <div class="purchase-date-block">
+              <span class="purchase-date-day">02</span>
+              <span class="purchase-date-month">Jul</span>
+            </div>
+            <div class="purchase-info">
+              <p class="purchase-order-no">Order #244</p>
+              <span class="purchase-meta">3 products</span>
+            </div>
+            <span class="purchase-total">EGP 96</span>
+            <span class="purchase-status status-processing">Processing</span>
+            <button class="purchase-view-btn">View Order</button>
+          </div>
+
+          <div class="purchase-item" data-order-id="243">
+            <div class="purchase-date-block">
+              <span class="purchase-date-day">27</span>
+              <span class="purchase-date-month">Jun</span>
+            </div>
+            <div class="purchase-info">
+              <p class="purchase-order-no">Order #243</p>
+              <span class="purchase-meta">12 products</span>
+            </div>
+            <span class="purchase-total">EGP 540</span>
+            <span class="purchase-status status-delivered">Delivered</span>
+            <button class="purchase-view-btn">View Order</button>
+          </div>
+
+          <div class="purchase-item" data-order-id="242">
+            <div class="purchase-date-block">
+              <span class="purchase-date-day">19</span>
+              <span class="purchase-date-month">Jun</span>
+            </div>
+            <div class="purchase-info">
+              <p class="purchase-order-no">Order #242</p>
+              <span class="purchase-meta">2 products</span>
+            </div>
+            <span class="purchase-total">EGP 54</span>
+            <span class="purchase-status status-cancelled">Cancelled</span>
+            <button class="purchase-view-btn">View Order</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SHOPPING INSIGHTS ============ -->
+      <section class="page-section insights-section wrap">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Powered by RetailIQ AI</p>
+            <h2 class="section-title" style="margin:0;">Shopping insights.</h2>
+          </div>
+        </div>
+
+        <div class="insights-grid" id="shoppingInsightsGrid">
+          <div class="insight-card">
+            <div class="insight-icon">📈</div>
+            <p class="insight-text">You spend 25% more on weekends than on weekdays.</p>
+          </div>
+          <div class="insight-card">
+            <div class="insight-icon">🥛</div>
+            <p class="insight-text">Dairy products are your most purchased category.</p>
+          </div>
+          <div class="insight-card">
+            <div class="insight-icon">💰</div>
+            <p class="insight-text">You saved 1,230 EGP using promotions this year.</p>
+          </div>
+          <div class="insight-card">
+            <div class="insight-icon">📊</div>
+            <p class="insight-text">Your spending increased by 12% this month.</p>
+          </div>
+          <div class="insight-card">
+            <div class="insight-icon">🍞</div>
+            <p class="insight-text">Consider checking today's bakery offers.</p>
+          </div>
+          <div class="insight-card">
+            <div class="insight-icon">🛒</div>
+            <p class="insight-text">You typically shop most on Saturdays.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ LOYALTY PROGRAM + ACTIVITY HEATMAP ============ -->
+      <section class="page-section loyalty-section wrap">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Rewards</p>
+            <h2 class="section-title" style="margin:0;">Loyalty & shopping activity.</h2>
+          </div>
+        </div>
+
+        <div class="loyalty-grid">
+          <div class="loyalty-panel" id="loyaltyPanel">
+            <div class="loyalty-head">
+              <span class="loyalty-level-badge"><span class="level-icon">🥈</span><span id="loyaltyLevelName">Silver</span></span>
+              <span class="loyalty-points">Points: <strong id="loyaltyPointsValue">1,780</strong></span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="loyaltyProgressFill" data-progress="78" style="width:0%;"></div>
+            </div>
+            <p class="progress-caption"><span id="loyaltyProgressPct">78%</span> to Gold — <span id="loyaltyPointsRemaining">220 points until Gold</span></p>
+
+            <div class="loyalty-stats-row">
+              <div>
+                <p class="loyalty-stat-label">Current Rank</p>
+                <p class="loyalty-stat-value" id="loyaltyRankValue">Top 15%</p>
+              </div>
+              <div>
+                <p class="loyalty-stat-label">Loyalty Points</p>
+                <p class="loyalty-stat-value" id="loyaltyPointsRepeat">1,780 pts</p>
+              </div>
+              <div>
+                <p class="loyalty-stat-label">Next Reward</p>
+                <p class="loyalty-stat-value" id="loyaltyNextReward">Free Delivery</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="heatmap-panel">
+            <p class="heatmap-title">Shopping Activity This Week</p>
+            <div class="heatmap-row" id="activityHeatmap">
+              <!-- populated by customer-dashboard.js -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ FAVORITE CATEGORIES ============ -->
+      <section class="page-section fav-categories-section wrap">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Your shopping patterns</p>
+            <h2 class="section-title" style="margin:0;">Favorite categories.</h2>
+          </div>
+        </div>
+
+        <div class="fav-categories-grid" id="favoriteCategoriesGrid">
+          <div class="fav-category-card" data-category="dairy">
+            <div class="fav-category-top">
+              <div class="fav-category-emoji">🥛</div>
+              <div>
+                <p class="fav-category-name">Dairy</p>
+                <span class="fav-category-count">142 purchases</span>
+              </div>
+            </div>
+            <div class="fav-category-bar-track"><div class="fav-category-bar-fill" style="width:28%;"></div></div>
+            <span class="fav-category-pct">28% of total purchases</span>
+          </div>
+
+          <div class="fav-category-card" data-category="snacks">
+            <div class="fav-category-top">
+              <div class="fav-category-emoji">🍪</div>
+              <div>
+                <p class="fav-category-name">Snacks</p>
+                <span class="fav-category-count">91 purchases</span>
+              </div>
+            </div>
+            <div class="fav-category-bar-track"><div class="fav-category-bar-fill" style="width:18%;"></div></div>
+            <span class="fav-category-pct">18% of total purchases</span>
+          </div>
+
+          <div class="fav-category-card" data-category="bakery">
+            <div class="fav-category-top">
+              <div class="fav-category-emoji">🍞</div>
+              <div>
+                <p class="fav-category-name">Bakery</p>
+                <span class="fav-category-count">80 purchases</span>
+              </div>
+            </div>
+            <div class="fav-category-bar-track"><div class="fav-category-bar-fill" style="width:16%;"></div></div>
+            <span class="fav-category-pct">16% of total purchases</span>
+          </div>
+
+          <div class="fav-category-card" data-category="drinks">
+            <div class="fav-category-top">
+              <div class="fav-category-emoji">🥤</div>
+              <div>
+                <p class="fav-category-name">Drinks</p>
+                <span class="fav-category-count">70 purchases</span>
+              </div>
+            </div>
+            <div class="fav-category-bar-track"><div class="fav-category-bar-fill" style="width:14%;"></div></div>
+            <span class="fav-category-pct">14% of total purchases</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ RECENTLY VIEWED ============ -->
+      <section class="page-section recently-viewed-section wrap">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Pick up where you left off</p>
+            <h2 class="section-title" style="margin:0;">Recently viewed products.</h2>
+          </div>
+        </div>
+
+        <div class="offers-rail-wrap">
+          <button class="rail-btn prev" id="recentViewedPrev" aria-label="Scroll left">‹</button>
+          <div class="offers-rail" id="recentViewedRail">
+
+            <article class="recent-viewed-card" data-id="rv1">
+              <div class="recent-viewed-image">🧃</div>
+              <div class="recent-viewed-body">
+                <h3 class="recent-viewed-name">Mango Juice 1L</h3>
+                <span class="recent-viewed-price">EGP 35</span>
+                <button class="recent-viewed-btn">View Again</button>
+              </div>
+            </article>
+
+            <article class="recent-viewed-card" data-id="rv2">
+              <div class="recent-viewed-image">🍫</div>
+              <div class="recent-viewed-body">
+                <h3 class="recent-viewed-name">Dark Chocolate Bar</h3>
+                <span class="recent-viewed-price">EGP 48</span>
+                <button class="recent-viewed-btn">View Again</button>
+              </div>
+            </article>
+
+            <article class="recent-viewed-card" data-id="rv3">
+              <div class="recent-viewed-image">🧈</div>
+              <div class="recent-viewed-body">
+                <h3 class="recent-viewed-name">Salted Butter 200g</h3>
+                <span class="recent-viewed-price">EGP 58</span>
+                <button class="recent-viewed-btn">View Again</button>
+              </div>
+            </article>
+
+            <article class="recent-viewed-card" data-id="rv4">
+              <div class="recent-viewed-image">🥐</div>
+              <div class="recent-viewed-body">
+                <h3 class="recent-viewed-name">Butter Croissants x4</h3>
+                <span class="recent-viewed-price">EGP 64</span>
+                <button class="recent-viewed-btn">View Again</button>
+              </div>
+            </article>
+
+          </div>
+          <button class="rail-btn next" id="recentViewedNext" aria-label="Scroll right">›</button>
+        </div>
+      </section>
+
+      <!-- ============ STORE INFORMATION ============ -->
+      <section class="page-section store-info-section wrap">
+        <div class="store-info-panel">
+          <div class="info-item">
+            <span class="info-label">Store Status</span>
+            <span class="info-value" id="infoStoreStatus">—</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Opening Hours</span>
+            <span class="info-value">9:00 AM</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Closing Hours</span>
+            <span class="info-value">11:00 PM</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Active Offers Today</span>
+            <span class="info-value" id="infoActiveOffers">5</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Available Categories</span>
+            <span class="info-value" id="infoAvailableCategories">7</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ QUICK ACTIONS ============ -->
+      <section class="page-section quick-actions-section wrap">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Do more, faster</p>
+            <h2 class="section-title" style="margin:0;">Quick actions.</h2>
+          </div>
+        </div>
+
+        <div class="quick-actions-row">
+          <a class="quick-action-btn" href="/customer/assistant">
+            <span class="quick-action-icon"><i class="fa-solid fa-robot"></i></span>
+            Ask AI Assistant
+          </a>
+          <a class="quick-action-btn" href="#">
+            <span class="quick-action-icon"><i class="fa-solid fa-tags"></i></span>
+            Browse Offers
+          </a>
+          <a class="quick-action-btn" href="/customer/purchases">
+            <span class="quick-action-icon"><i class="fa-solid fa-receipt"></i></span>
+            View Purchases
+          </a>
+          <a class="quick-action-btn" href="/customer/profile">
+            <span class="quick-action-icon"><i class="fa-solid fa-pen"></i></span>
+            Edit Profile
+          </a>
+        </div>
+      </section>
+
+      <!-- ============ NOTIFICATIONS ============ -->
+      <section class="page-section notifications-section wrap">
+        <div class="section-head">
+          <div>
+            <p class="section-eyebrow">Stay in the loop</p>
+            <h2 class="section-title" style="margin:0;">Notifications.</h2>
+          </div>
+        </div>
+
+        <div class="notifications-panel" id="notificationsPanel">
+          <div class="notification-item is-unread">
+            <div class="notification-icon">🏷️</div>
+            <div class="notification-content">
+              <p class="notification-text">New offer available on Greek Yogurt 500g.</p>
+              <span class="notification-time">2 hours ago</span>
+            </div>
+          </div>
+          <div class="notification-item is-unread">
+            <div class="notification-icon">📦</div>
+            <div class="notification-content">
+              <p class="notification-text">Your favorite product is back in stock.</p>
+              <span class="notification-time">Yesterday, 6:40 PM</span>
+            </div>
+          </div>
+          <div class="notification-item">
+            <div class="notification-icon">🍞</div>
+            <div class="notification-content">
+              <p class="notification-text">New products added to Bakery.</p>
+              <span class="notification-time">2 days ago</span>
+            </div>
+          </div>
+          <div class="notification-item">
+            <div class="notification-icon">🎉</div>
+            <div class="notification-content">
+              <p class="notification-text">Weekend discounts are now active.</p>
+              <span class="notification-time">3 days ago</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="brand brand-footer">
+      <img src="/static/images/logo.png" alt="RetailIQ logo" class="brand-mark brand-mark-sm">
+      <span class="brand-name brand-name-sm">Retail<span class="accent">IQ</span></span>
+    </div>
+    <p class="footer-line">Smart Retail Mentoring Eco-System</p>
+    <div class="footer-links">
+      <a href="/privacy-policy">Privacy Policy</a>
+      <a href="/terms">Terms</a>
+      <a href="/contact">Contact</a>
+      <span class="footer-version">v1.0.0</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="/static/js/customer-main.js"></script>
+<script src="/static/js/customer-dashboard.js"></script>
+</body>
+</html>

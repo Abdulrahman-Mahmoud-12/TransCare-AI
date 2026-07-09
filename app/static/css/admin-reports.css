@@ -1,0 +1,311 @@
+/* ---------------------------------------------
+   RetailIQ — Admin Business Reports Page
+   Extends admin-main.css (which extends home.css).
+   Load order: home.css -> admin-main.css -> admin-reports.css
+--------------------------------------------- */
+
+/* ---------------------------------------------
+   Page header
+--------------------------------------------- */
+.reports-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 44px 0 10px;
+  flex-wrap: wrap;
+}
+
+.reports-header-text { max-width: 640px; }
+
+.reports-header-title {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 3.2vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--navy-950);
+  margin: 0 0 8px;
+}
+
+.reports-header-sub {
+  font-size: 15px;
+  color: var(--text-muted);
+  margin: 0 0 22px;
+}
+
+.reports-header-illustration {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--slate-900), var(--indigo-600) 160%);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-elevated);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reports-header-illustration .illustration-ring {
+  top: -30px;
+  right: -30px;
+  width: 110px;
+  height: 110px;
+}
+
+.reports-header-emoji {
+  font-size: 46px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------------------------------------------
+   Generate report form
+--------------------------------------------- */
+.report-form-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 28px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-field label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.form-field input,
+.form-field select {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+  border-color: var(--indigo-500);
+  background: var(--bg-panel);
+}
+
+.form-field select:disabled,
+.form-field input:disabled {
+  color: var(--text-soft);
+  cursor: not-allowed;
+}
+
+.report-form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+/* ---------------------------------------------
+   AI insight cards
+--------------------------------------------- */
+.insights-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.insight-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.insight-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--indigo-500);
+}
+
+.insight-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--indigo-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+}
+
+.insight-text {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.5;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.insight-tag {
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+
+.tag-warning { color: var(--status-yellow); background: var(--status-yellow-bg); }
+.tag-positive { color: var(--status-green); background: var(--status-green-bg); }
+.tag-neutral { color: var(--indigo-600); background: var(--indigo-100); }
+
+/* ---------------------------------------------
+   Report preview card
+--------------------------------------------- */
+.preview-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 26px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.preview-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.preview-meta {
+  font-size: 12.5px;
+  color: var(--text-soft);
+  margin: 6px 0 0;
+}
+
+.preview-summary {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.65;
+  margin: 0;
+  max-width: 780px;
+}
+
+.preview-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ---------------------------------------------
+   Report history table
+--------------------------------------------- */
+.history-table-wrap {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow-x: auto;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 620px;
+}
+
+.history-table thead th {
+  text-align: left;
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-soft);
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.history-table tbody td {
+  padding: 16px 20px;
+  font-size: 13.5px;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.history-table tbody tr:last-child td { border-bottom: none; }
+.history-table tbody tr { transition: background 0.15s ease; }
+.history-table tbody tr:hover { background: var(--bg-alt); }
+
+.mono-cell {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.history-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.icon-action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.icon-action-btn:hover:not(:disabled) { border-color: var(--indigo-500); background: var(--indigo-100); }
+.icon-action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.icon-action-btn.is-danger:hover:not(:disabled) { border-color: var(--status-red); background: var(--status-red-bg); }
+
+/* ---------------------------------------------
+   Responsive
+--------------------------------------------- */
+@media (max-width: 1180px) {
+  .report-form-panel { grid-template-columns: repeat(2, 1fr); }
+  .insights-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 720px) {
+  .reports-header { flex-direction: column; align-items: flex-start; }
+  .reports-header-illustration { width: 100%; height: 110px; }
+  .report-form-panel { grid-template-columns: 1fr; padding: 22px; }
+  .insights-grid { grid-template-columns: 1fr; }
+  .preview-card { padding: 22px; }
+  .preview-actions { flex-direction: column; }
+  .preview-actions .btn { width: 100%; text-align: center; }
+}

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log In — RetailIQ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/home.css">
+  <link rel="stylesheet" href="/static/css/auth.css">
+</head>
+<body class="auth-body">
+
+<div class="bg-field" aria-hidden="true">
+  <svg class="pulse-line" viewBox="0 0 1600 400" preserveAspectRatio="none">
+    <path class="pulse-path" d="M0,200 L120,200 L150,120 L190,280 L230,60 L270,200 L420,200 L450,160 L480,200 L620,200 L650,90 L690,310 L730,200 L900,200 L930,150 L960,240 L1020,200 L1180,200 L1210,70 L1250,290 L1290,140 L1330,200 L1600,200"></path>
+  </svg>
+</div>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a href="/" class="brand">
+      <img src="/static/images/logo.png" alt="RetailIQ logo" class="brand-mark">
+      <span class="brand-name">Retail<span class="accent">IQ</span></span>
+    </a>
+  </div>
+</header>
+
+<main class="auth-main">
+  <div class="auth-card">
+    <h1 class="auth-title">Log in</h1>
+    <p class="auth-sub">Access your automated store environment metrics.</p>
+
+    <div class="auth-tabs" role="tablist">
+      <button type="button" class="auth-tab is-active" role="tab" aria-selected="true" aria-controls="loginForm" data-role="customer">Customer</button>
+      <button type="button" class="auth-tab" role="tab" aria-selected="false" aria-controls="loginForm" data-role="admin">Manager / Owner</button>
+    </div>
+
+    <form id="loginForm" novalidate>
+      <label class="auth-field">
+        <span class="auth-label">Email address</span>
+        <input type="email" name="email" id="loginEmail" placeholder="you@store.com" required>
+      </label>
+
+      <label class="auth-field">
+        <span class="auth-label">Password</span>
+        <div class="auth-input-group">
+          <input type="password" name="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" required minlength="6">
+          <button type="button" class="auth-toggle-visibility" id="togglePassword" aria-label="Show password">Show</button>
+        </div>
+      </label>
+
+      <div class="auth-row">
+        <label class="auth-check">
+          <input type="checkbox" name="remember" id="rememberMe">
+          <span>Remember me</span>
+        </label>
+        <a href="#" class="auth-link-inline">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="btn btn-primary auth-submit" id="loginSubmit">
+        <span class="auth-submit-label">Log in</span>
+      </button>
+
+      <div class="role-status" id="loginStatus" aria-live="polite"></div>
+    </form>
+
+    <p class="auth-switch">Don't have an account? <a href="/auth/register">Create one</a></p>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="brand brand-footer">
+      <img src="/static/images/logo.png" alt="RetailIQ logo" class="brand-mark brand-mark-sm">
+      <span class="brand-name brand-name-sm">Retail<span class="accent">IQ</span></span>
+    </div>
+    <p class="footer-line">Smart Retail Mentoring Eco-System</p>
+  </div>
+</footer>
+
+<script src="/static/js/login.js"></script>
+</body>
+</html>
