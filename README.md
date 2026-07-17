@@ -538,31 +538,31 @@ python run.py
 <table>
 <tr>
 <td align="center">
-<a href="#">
+<a href="https://github.com/Abdulrahman-Mahmoud-12">
 <sub><b>Abdelrahman Mahmoud</b></sub>
 </a><br/>
 <sub>Team Leader | AI & ML Engineer</sub>
 </td>
 <td align="center">
-<a href="#">
+<a href="https://github.com/s-aif11">
 <sub><b>Saif allah Mohamed</b></sub>
 </a><br/>
 <sub>AI & ML Engineer</sub>
 </td>
 <td align="center">
-<a href="#">
+<a href="https://github.com/ayae56527-netizen">
 <sub><b>Aya Emad</b></sub>
 </a><br/>
 <sub>AI & ML Engineer</sub>
 </td>
 <td align="center">
-<a href="#">
+<a href="https://github.com/Sarah1542">
 <sub><b>Sarah Mahrous</b></sub>
 </a><br/>
 <sub>AI & ML Engineer</sub>
 </td>
 <td align="center">
-<a href="#">
+<a href="https://github.com/maryam2004-a">
 <sub><b>Maryam Ashraf</b></sub>
 </a><br/>
 <sub>AI & ML Engineer</sub>
