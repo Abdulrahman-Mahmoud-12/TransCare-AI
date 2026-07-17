@@ -376,7 +376,9 @@ sequenceDiagram
     │
     ├── database/                            
     │   ├── seeds/
+    │   ├── Migration_reports.sql
     │   ├── Migration_shelf_monitoring.sql
+    │   ├── Migration_shelf_monitoring_insughts.sql
     │   └── schema.sql
     │
     ├── storage/
@@ -385,11 +387,11 @@ sequenceDiagram
     │   ├── detected_images/               
     │   └── logs/
     │
-    ├── notebooks/
-    │   ├── ShelfMonitoring.ipynb
-    │   ├── ProfitPrediction.ipynb
-    │   ├── ReportsGeneration.ipynb
-    │   └── ReturnPrediction.ipynb
+    └── notebooks/
+        ├── ShelfMonitoring.ipynb
+        ├── ProfitPrediction.ipynb
+        ├── ReportsGeneration.ipynb
+        └── ReturnPrediction.ipynb
 
 ```
 
@@ -489,37 +491,28 @@ python run.py
 
 <details>
 <summary><strong>🤖 AI Assistant</strong></summary>
-
-`screenshots/ai_assistant.png`
-
+<img src="screenshots/ai_assistant.png">
 </details>
 
 <details>
 <summary><strong>🧑‍💼 Admin Main</strong></summary>
-
-`screenshots/admin_main.png`
-
+<img src="screenshots/admin_main.png">
 </details>
 
 <details>
 <summary><strong>📈 Admin Dashboard</strong></summary>
-
-`screenshots/admin_dashboard.png`
-
+<img src="screenshots/admin_dashboard.png">
 </details>
 
 <details>
 <summary><strong>🎥 Shelf Monitoring</strong></summary>
-
-`screenshots/shelf_monitoring.png`
-
+<img src="screenshots/shelf_monitoring1.png">
+<img src="screenshots/shelf_monitoring2.png">
 </details>
 
 <details>
 <summary><strong>📄 Business Reports</strong></summary>
-
-`screenshots/business_reports.png`
-
+<img src="screenshots/business_reports.png">
 </details>
 
 ---
