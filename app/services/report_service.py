@@ -24,6 +24,7 @@ from typing import Optional
 
 import pandas as pd
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 
 from ai_modules.report_generator.pdf_generator import generate_pdf
 from ai_modules.report_generator.report import generate_narrative
@@ -35,21 +36,26 @@ REPORTS_DIR = "storage/reports"
 def _load_sales_frame(db: Session, date_from: datetime, date_to: datetime) -> dict:
     engine = db.get_bind()
 
-    purchases = pd.read_sql(
-        """
-        SELECT * FROM purchases
-        WHERE purchase_date BETWEEN %(date_from)s AND %(date_to)s
-        """,
+    order_items = pd.read_sql(
+        text("""
+            SELECT oi.*, o.customer_id, o.status AS payment_status,
+                   o.payment_method, o.created_at AS purchase_date
+            FROM order_items oi
+            JOIN orders o ON o.id = oi.order_id
+            WHERE o.created_at BETWEEN :date_from AND :date_to
+        """),
         engine,
         params={"date_from": date_from, "date_to": date_to},
     )
     products = pd.read_sql("SELECT * FROM products", engine)
     categories = pd.read_sql("SELECT * FROM categories", engine)
-    customers = pd.read_sql("SELECT * FROM customers", engine)
+    customers = pd.read_sql(
+        "SELECT * FROM users WHERE role = 'customer'", engine
+    )
 
-    purchases["revenue"] = purchases["quantity"] * purchases["unit_price"]
+    order_items["revenue"] = order_items["quantity"] * order_items["unit_price"]
 
-    sales = purchases.merge(
+    sales = order_items.merge(
         products, left_on="product_id", right_on="id", how="left", suffixes=("", "_product")
     )
     sales = sales.merge(
@@ -59,7 +65,7 @@ def _load_sales_frame(db: Session, date_from: datetime, date_to: datetime) -> di
         customers, left_on="customer_id", right_on="id", how="left", suffixes=("", "_customer")
     )
 
-    return {"sales": sales, "purchases": purchases}
+    return {"sales": sales, "purchases": order_items}
 
 
 def compute_kpis(db: Session, date_from: datetime, date_to: datetime) -> dict:
@@ -73,12 +79,12 @@ def compute_kpis(db: Session, date_from: datetime, date_to: datetime) -> dict:
 
     total_revenue = float(sales["revenue"].sum())
     completed_revenue = float(
-        sales.loc[sales["payment_status"] == "Completed", "revenue"].sum()
+        sales.loc[sales["payment_status"] == "completed", "revenue"].sum()
     )
     total_orders = int(purchases["id"].nunique())
     avg_order_value = total_revenue / total_orders if total_orders else 0.0
     completion_rate = (
-        float(purchases["payment_status"].eq("Completed").mean() * 100)
+        float(purchases["payment_status"].eq("completed").mean() * 100)
         if total_orders else 0.0
     )
 

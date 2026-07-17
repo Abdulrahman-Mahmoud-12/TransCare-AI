@@ -33,3 +33,5 @@ chromadb>=0.5.0
 ultralytics
 pillow
 python-multipart
+
+accelerate

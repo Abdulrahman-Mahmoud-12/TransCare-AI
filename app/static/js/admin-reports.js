@@ -144,9 +144,9 @@ document.addEventListener("DOMContentLoaded", () => {
         from.setDate(today.getDate() - 30);
         break;
       default:
-        return null; // "custom"
+        return null;
     }
-    return { date_from: toISODate(from), date_to: toISODate(today) };
+    return { date_from: `${toISODate(from)}T00:00:00`, date_to: `${toISODate(today)}T23:59:59` };
   }
 
   // ---------------------------------------------
