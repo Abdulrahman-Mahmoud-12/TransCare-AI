@@ -617,6 +617,6 @@ Special thanks to the open-source tools and libraries that made RetailIQ possibl
 
 <div align="center">
 
-**⭐ If you find RetailIQ useful, consider giving it a star on GitHub! ⭐**
+**⭐⭐ If you find RetailIQ useful, consider giving it a star on GitHub! ⭐⭐**
 
 </div>
